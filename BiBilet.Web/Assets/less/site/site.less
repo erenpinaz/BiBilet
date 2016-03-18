@@ -1,0 +1,78 @@
+﻿/* ======================================================
+    Filename    : site.less
+    Description : Site style definitions
+    Author      : Nejdet Eren Pinaz
+    * Compile this into css folder (Web Compiler, etc.)
+   ====================================================== */
+
+/* Imports */
+@import "../bootstrap/bootstrap.less";
+
+/* =============================
+    Styles
+   ============================= */
+
+.glyphicon {
+    margin-right: 8px;
+}
+
+.navbar {
+    margin-bottom: 0;
+
+    .navbar-brand {
+        font-family: "Lobster";
+        font-size: 28px;
+        text-shadow: 2px 1px 0 darken(@navbar-default-bg, 10);
+    }
+
+    .nav {
+        > li > a {
+            font-weight: bold;
+            text-shadow: 2px 1px 0 darken(@navbar-default-bg, 10);
+
+            &:focus, &:hover {
+                text-shadow: none;
+            }
+        }
+    }
+}
+
+.carousel {
+    .carousel-inner {
+        height: 550px;
+
+        #firstSlide {
+            height: 100%;
+            width: 100%;
+            background: url("/Assets/images/carousel.jpg");
+            background-size: cover;
+        }
+    }
+}
+
+.content {
+    padding: 20px;
+}
+
+.categories {
+    .thumbnail {
+        position: relative;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center center;
+        height: 240px;
+
+        .name-wrapper {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            margin-top: -18px;
+            text-align: center;
+
+            h4 {
+                color: #fff;
+                font-weight: bold;
+            }
+        }
+    }
+}

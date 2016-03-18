@@ -1,0 +1,119 @@
+﻿@model BiBilet.Web.ViewModels.HomeViewModel
+
+@{
+    ViewBag.Title = "Bi Bilet - BTSP 17. Dönem Yazılım Geliştirme Projesi";
+}
+
+<div class="hot-events">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="page-header">
+                <i class="glyphicon glyphicon-fire"></i>Çok yakında
+            </h3>
+            <div class="row">
+                @foreach (var hotEvent in Model.HotEvents)
+                {
+                    <div class="col-md-3">
+                        <div class="thumbnail">
+                            <a href="@Url.Action("Details", "Event", new {slug = hotEvent.Slug})">
+                                <img class="img-responsive" src="@hotEvent.Image" alt="Etkinlik Resmi"/>
+                            </a>
+                            <div class="caption">
+                                <div class="event-title">
+                                    <a href="@Url.Action("Details", "Event", new {slug = hotEvent.Slug})">
+                                        <b>@hotEvent.Title</b>
+                                    </a>
+                                </div>
+                                <div class="event-topic">
+                                    <small>
+                                        <a href="#">@hotEvent.Topic.Name</a> / <a href="#">@hotEvent.SubTopic.Name</a>
+                                    </small>
+                                </div>
+                                <div class="event-location">
+                                    <small>@hotEvent.Venue.Name</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="events">
+    <div class="row">
+        <div class="col-md-6">
+            <h3 class="page-header">
+                <i class="glyphicon glyphicon-time"></i>Yaklaşan etkinlikler
+            </h3>
+            <table class="table table-hover">
+                <tbody>
+                @foreach (var upcomingEvent in Model.UpcomingEvents)
+                {
+                    <tr>
+                        <th>
+                            @upcomingEvent.StartDate.Day
+                            <br/>
+                            @upcomingEvent.StartDate.ToString("MMMM")
+                        </th>
+                        <td>
+                            <a href="@Url.Action("Details", "Event", new {slug = upcomingEvent.Slug})">
+                                <b>@upcomingEvent.Title</b>
+                            </a>
+                            <br/>
+                            <small>@upcomingEvent.Venue.Name</small>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <h3 class="page-header">
+                <i class="glyphicon glyphicon-calendar"></i>Geçmiş etkinlikler
+            </h3>
+            <table class="table table-hover">
+                <tbody>
+                @foreach (var pastEvent in Model.PastEvents)
+                {
+                    <tr>
+                        <th>
+                            @pastEvent.StartDate.Day
+                            <br/>
+                            @pastEvent.StartDate.ToString("MMMM")
+                        </th>
+                        <td>
+                            <a href="@Url.Action("Details", "Event", new {slug = pastEvent.Slug})">
+                                <b>@pastEvent.Title</b>
+                            </a>
+                            <br/>
+                            <small>@pastEvent.Venue.Name</small>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="categories">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="page-header">
+                <i class="glyphicon glyphicon-folder-close"></i>Popüler Kategoriler
+            </h3>
+            <div class="row">
+                @foreach (var category in Model.Categories)
+                {
+                    <div class="col-sm-6 col-md-3">
+                        <a href="@category.Slug" class="thumbnail" style="background-image: url('/Assets/images/test.png')">
+                            <div class="name-wrapper">
+                                <h4>@category.Name</h4>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

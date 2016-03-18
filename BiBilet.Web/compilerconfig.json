@@ -1,0 +1,9 @@
+﻿[
+  {
+    "outputFile": "Assets/css/site.css",
+    "inputFile": "Assets/less/site/site.less",
+    "minify": {
+      "enabled": false
+    }
+  }
+]
