@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -78,7 +79,7 @@ namespace BiBilet.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser() {UserName = model.UserName, Name = model.Name, Email = model.Email};
+                var user = new IdentityUser() { UserName = model.UserName, Name = model.Name, Email = model.Email };
                 user.Organizers.Add(new Organizer()
                 {
                     OrganizerId = Guid.NewGuid(),
@@ -155,7 +156,7 @@ namespace BiBilet.Web.Controllers
                                 }
                             }
                             return RedirectToAction("Settings", "Account",
-                                new {message = "Kullanıcı başarıyla güncellendi"});
+                                new { message = "Kullanıcı başarıyla güncellendi" });
                         }
                         else
                         {
@@ -172,14 +173,32 @@ namespace BiBilet.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> OrganizerProfile(string message)
+        public async Task<ActionResult> MyProfile(Guid? id, string message)
         {
             ViewBag.StatusMessage = message;
 
-            var organizer =
-                await _unitOfWork.OrganizerRepository.GetOrganizerByUserIdAsync(GetGuid(User.Identity.GetUserId()));
-            var model = new OrganizerProfileViewModel()
+            var organizers =
+                await _unitOfWork.OrganizerRepository.GetUserOrganizersAsync(GetGuid(User.Identity.GetUserId()));
+
+            ViewBag.Organizers = organizers;
+
+            Organizer organizer;
+            if (id.HasValue)
             {
+                organizer = await _unitOfWork.OrganizerRepository.GetUserOrganizerAsync(id.Value, GetGuid(User.Identity.GetUserId()));
+                if (organizer == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+                }
+            }
+            else
+            {
+                organizer = organizers.First();
+            }
+
+            var model = new MyProfileViewModel()
+            {
+                OrganizerId = organizer.OrganizerId,
                 Name = organizer.Name,
                 Description = organizer.Description,
                 Image = organizer.Image,
@@ -192,12 +211,12 @@ namespace BiBilet.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> OrganizerProfile(OrganizerProfileViewModel model)
+        public async Task<ActionResult> MyProfile(MyProfileViewModel model)
         {
             if (ModelState.IsValid)
             {
                 var organizer =
-                    await _unitOfWork.OrganizerRepository.GetOrganizerByUserIdAsync(GetGuid(User.Identity.GetUserId()));
+                    await _unitOfWork.OrganizerRepository.GetUserOrganizerAsync(model.OrganizerId, GetGuid(User.Identity.GetUserId()));
                 if (organizer != null)
                 {
                     try
@@ -251,7 +270,7 @@ namespace BiBilet.Web.Controllers
         private async Task SignInAsync(IdentityUser user, bool isPersistent)
         {
             var identity = await _userManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
-            AuthenticationManager.SignIn(new AuthenticationProperties() {IsPersistent = isPersistent}, identity);
+            AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = isPersistent }, identity);
         }
 
         private void AddErrors(IdentityResult result)

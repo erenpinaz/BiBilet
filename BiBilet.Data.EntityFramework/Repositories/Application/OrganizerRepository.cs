@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading;
@@ -22,21 +23,35 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         {
         }
 
-        //TODO: Add organizer list methods & get organizer by id method
-
-        public Organizer GetOrganizerByUserId(Guid id)
+        public List<Organizer> GetUserOrganizers(Guid userId)
         {
-            return Set.FirstOrDefault(o => o.UserId.Equals(id));
+            return Set.Where(o => o.UserId.Equals(userId)).ToList();
         }
 
-        public Task<Organizer> GetOrganizerByUserIdAsync(Guid id)
+        public Task<List<Organizer>> GetUserOrganizersAsync(Guid userId)
         {
-            return Set.FirstOrDefaultAsync(o => o.UserId.Equals(id));
+            return Set.Where(o => o.UserId.Equals(userId)).ToListAsync();
         }
 
-        public Task<Organizer> GetOrganizerByUserIdAsync(Guid id, CancellationToken cancellationToken)
+        public Task<List<Organizer>> GetUserOrganizersAsync(Guid userId, CancellationToken cancellationToken)
         {
-            return Set.FirstOrDefaultAsync(o => o.UserId.Equals(id), cancellationToken);
+            return Set.Where(o => o.UserId.Equals(userId)).ToListAsync(cancellationToken);
+        }
+
+        public Organizer GetUserOrganizer(Guid id, Guid userId)
+        {
+            return Set.FirstOrDefault(o => o.OrganizerId.Equals(id) && o.UserId.Equals(userId));
+        }
+
+        public Task<Organizer> GetUserOrganizerAsync(Guid id, Guid userId)
+        {
+            return Set.FirstOrDefaultAsync(o => o.OrganizerId.Equals(id) && o.UserId.Equals(userId));
+
+        }
+
+        public Task<Organizer> GetUserOrganizerAsync(Guid id, Guid userId, CancellationToken cancellationToken)
+        {
+            return Set.FirstOrDefaultAsync(o => o.OrganizerId.Equals(id) && o.UserId.Equals(userId), cancellationToken);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using BiBilet.Domain.Entities.Application;
@@ -10,8 +11,12 @@ namespace BiBilet.Domain.Repositories.Application
     /// </summary>
     public interface IOrganizerRepository : IRepository<Organizer>
     {
-        Organizer GetOrganizerByUserId(Guid id);
-        Task<Organizer> GetOrganizerByUserIdAsync(Guid id);
-        Task<Organizer> GetOrganizerByUserIdAsync(Guid id, CancellationToken cancellationToken);
+        List<Organizer> GetUserOrganizers(Guid userId);
+        Task<List<Organizer>> GetUserOrganizersAsync(Guid userId);
+        Task<List<Organizer>> GetUserOrganizersAsync(Guid userId, CancellationToken cancellationToken);
+
+        Organizer GetUserOrganizer(Guid id, Guid getGuid);
+        Task<Organizer> GetUserOrganizerAsync(Guid id, Guid getGuid);
+        Task<Organizer> GetUserOrganizerAsync(Guid id, Guid getGuid, CancellationToken cancellationToken);
     }
 }

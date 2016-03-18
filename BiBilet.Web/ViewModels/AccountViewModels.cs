@@ -1,10 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 
 namespace BiBilet.Web.ViewModels
 {
-    public class OrganizerProfileViewModel
+    public class MyProfileViewModel
     {
+        public Guid OrganizerId { get; set; }
+
         [Required]
         [StringLength(128, MinimumLength = 3)]
         [DataType(DataType.Text)]
