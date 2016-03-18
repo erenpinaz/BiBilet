@@ -31,5 +31,28 @@ namespace BiBilet.Domain.Repositories.Identity
         /// <param name="username"></param>
         /// <returns>A <see cref="User" /></returns>
         Task<User> FindByUserNameAsync(CancellationToken cancellationToken, string username);
+
+        /// <summary>
+        /// Returns user
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns>A <see cref="User" /></returns>
+        User FindByEmail(string email);
+
+        /// <summary>
+        /// Asynchronously returns user
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns>A <see cref="User" /></returns>
+        Task<User> FindByEmailAsync(string email);
+
+        /// <summary>
+        /// Asynchronously returns user 
+        /// with cancellation support
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>A <see cref="User" /></returns>
+        Task<User> FindByEmailAsync(string email, CancellationToken cancellationToken);
     }
 }

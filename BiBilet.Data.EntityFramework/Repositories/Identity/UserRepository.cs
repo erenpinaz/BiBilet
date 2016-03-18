@@ -52,5 +52,37 @@ namespace BiBilet.Data.EntityFramework.Repositories.Identity
         {
             return Set.FirstOrDefaultAsync(x => x.UserName == username, cancellationToken);
         }
+
+        /// <summary>
+        /// Returns user
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns>A <see cref="User" /></returns>
+        public User FindByEmail(string email)
+        {
+            return Set.FirstOrDefault(x => x.Email == email);
+        }
+
+        /// <summary>
+        /// Asynchronously returns user
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns>A <see cref="User" /></returns>
+        public Task<User> FindByEmailAsync(string email)
+        {
+            return Set.FirstOrDefaultAsync(x => x.Email == email);
+        }
+
+        /// <summary>
+        /// Asynchronously returns user 
+        /// with cancellation support
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>A <see cref="User" /></returns>
+        public Task<User> FindByEmailAsync(string email, CancellationToken cancellationToken)
+        {
+            return Set.FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
+        }
     }
 }

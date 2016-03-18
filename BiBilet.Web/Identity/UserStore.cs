@@ -10,7 +10,7 @@ using Entities = BiBilet.Domain.Entities.Identity;
 namespace BiBilet.Web.Identity
 {
     public class UserStore : IUserLoginStore<IdentityUser, Guid>, IUserClaimStore<IdentityUser, Guid>,
-        IUserRoleStore<IdentityUser, Guid>, IUserPasswordStore<IdentityUser, Guid>,
+        IUserRoleStore<IdentityUser, Guid>, IUserPasswordStore<IdentityUser, Guid>, IUserEmailStore<IdentityUser, Guid>,
         IUserSecurityStampStore<IdentityUser, Guid>, IUserStore<IdentityUser, Guid>, IDisposable
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -319,6 +319,41 @@ namespace BiBilet.Web.Identity
         {
             user.SecurityStamp = stamp;
             return Task.FromResult(0);
+        }
+
+        #endregion
+
+        #region IUserEmailStore<IdentityUser, Guid> Members
+
+        public Task SetEmailAsync(IdentityUser user, string email)
+        {
+            user.Email = email;
+            return Task.FromResult(0);
+        }
+
+        public Task<string> GetEmailAsync(IdentityUser user)
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+            return Task.FromResult<string>(user.Email);
+        }
+
+        public Task<bool> GetEmailConfirmedAsync(IdentityUser user)
+        {
+            //TODO: Implement mail activation
+            throw new NotImplementedException();
+        }
+
+        public Task SetEmailConfirmedAsync(IdentityUser user, bool confirmed)
+        {
+            //TODO: Implement mail activation
+            throw new NotImplementedException();
+        }
+
+        public Task<IdentityUser> FindByEmailAsync(string email)
+        {
+            var user = _unitOfWork.UserRepository.FindByEmail(email);
+            return Task.FromResult<IdentityUser>(GetIdentityUser(user));
         }
 
         #endregion
