@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using BiBilet.Domain.Entities.Application;
 using BiBilet.Domain.Entities.Identity;
@@ -30,11 +29,12 @@ namespace BiBilet.Data.EntityFramework
                     new Organizer()
                     {
                         OrganizerId = Guid.NewGuid(),
-                        Name = "Middle East Technical University",
-                        Description = "Metu organizatör hesabı.",
+                        Name = "Testior Userfindel",
+                        Description = "Testior Userfindel kullanıcısının organizatör hesabı.",
                         Image = "/Assets/images/test.png",
-                        Website = "http://metu.edu.tr",
-                        Slug = "middle-east-technical"
+                        Website = "http://www.testioruserfindel.com",
+                        Slug = "testior-userfindel",
+                        IsDefault = true
                     }
                 }
             };

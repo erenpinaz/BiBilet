@@ -52,6 +52,11 @@ namespace BiBilet.Data.EntityFramework.Configuration.Application
                     new IndexAnnotation(new IndexAttribute("IX_Slug") {IsUnique = true}))
                 .IsRequired();
 
+            Property(x => x.IsDefault)
+                .HasColumnName("IsDefault")
+                .HasColumnType("bit")
+                .IsRequired();
+
             HasMany(x => x.Events)
                 .WithRequired(y => y.Organizer)
                 .HasForeignKey(y => y.OrganizerId);

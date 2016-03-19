@@ -13,11 +13,10 @@ namespace BiBilet.Web
                 .Include("~/assets/js/jquery-{version}.js")
                 .Include("~/assets/js/jquery.validate*")
                 .Include("~/assets/js/bootstrap.js")
-                .Include("~/assets/js/tinymce/tinymce.min.js")
                 .Include("~/assets/js/site.js"));
 
             // Enables versioning & minifying ( Web.Config override )
-            //BundleTable.EnableOptimizations = true;
+            BundleTable.EnableOptimizations = true;
         }
     }
 }

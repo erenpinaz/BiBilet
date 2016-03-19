@@ -438,7 +438,9 @@
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Event\Details.cshtml" />
     <Content Include="Views\Account\Settings.cshtml" />
-    <Content Include="Views\Account\MyProfile.cshtml" />
+    <Content Include="Views\Account\Organizer.cshtml" />
+    <Content Include="Views\Account\CreateOrganizer.cshtml" />
+    <Content Include="Views\Account\DeleteOrganizer.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

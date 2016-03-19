@@ -84,7 +84,7 @@ namespace BiBilet.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser() {UserName = model.UserName, Name = model.Name, Email = model.Email};
+                var user = new IdentityUser() { UserName = model.UserName, Name = model.Name, Email = model.Email };
                 user.Organizers.Add(new Organizer()
                 {
                     OrganizerId = Guid.NewGuid(),
@@ -161,7 +161,7 @@ namespace BiBilet.Web.Controllers
                                 }
                             }
                             return RedirectToAction("Settings", "Account",
-                                new {message = "Kullanıcı başarıyla güncellendi"});
+                                new { message = "Kullanıcı başarıyla güncellendi" });
                         }
                         else
                         {
@@ -178,7 +178,7 @@ namespace BiBilet.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> MyProfile(Guid? id, string message)
+        public async Task<ActionResult> Organizer(Guid? id, string message)
         {
             ViewBag.StatusMessage = message;
 
@@ -199,14 +199,16 @@ namespace BiBilet.Web.Controllers
                 organizer = organizers.First();
             }
 
-            var model = new MyProfileViewModel()
+            var model = new OrganizerViewModel()
             {
                 OrganizerId = organizer.OrganizerId,
                 Name = organizer.Name,
                 Description = organizer.Description,
                 Image = organizer.Image,
                 Website = organizer.Website,
-                Slug = organizer.Slug
+                Slug = organizer.Slug,
+                EventCount = organizer.Events.Count(),
+                IsRemovable = !organizer.IsDefault
             };
 
             ViewBag.Organizers = organizers;
@@ -214,9 +216,9 @@ namespace BiBilet.Web.Controllers
             return View(model);
         }
 
-        [HttpPost]
+        [HttpPost, ActionName("Organizer")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> MyProfile(MyProfileViewModel model)
+        public async Task<ActionResult> UpdateOrganizer(OrganizerViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -239,14 +241,14 @@ namespace BiBilet.Web.Controllers
                             UnitOfWork.OrganizerRepository.Update(organizer);
                             await UnitOfWork.SaveChangesAsync();
 
-                            return RedirectToAction("MyProfile", "Account",
-                                new {id = organizer.OrganizerId, message = "Profil başarıyla güncellendi"});
+                            return RedirectToAction("Organizer", "Account",
+                                new { id = organizer.OrganizerId, message = "Profil başarıyla güncellendi" });
                         }
                         ModelState.AddModelError("slug", "Url kısaltması özel olmalıdır");
                     }
                     catch
                     {
-                        ModelState.AddModelError("", "Organizatör profili güncellenirken bir sorun oluştu");
+                        ModelState.AddModelError("", "Organizatör profili güncellenirken bir hata oluştu");
                     }
                 }
 
@@ -254,6 +256,97 @@ namespace BiBilet.Web.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult CreateOrganizer()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateOrganizer(OrganizerViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var organizer = new Organizer()
+                    {
+                        OrganizerId = Guid.NewGuid(),
+                        Name = model.Name,
+                        Description = model.Description,
+                        Image = model.Image,
+                        Website = model.Website,
+                        Slug = model.Slug,
+                        IsDefault = false,
+                        UserId = GetGuid(User.Identity.GetUserId())
+                    };
+
+                    if (await IsOrganizerSlugExists(model.Slug, organizer.OrganizerId))
+                    {
+                        UnitOfWork.OrganizerRepository.Add(organizer);
+                        await UnitOfWork.SaveChangesAsync();
+
+                        return RedirectToAction("Organizer", "Account", new { id = organizer.OrganizerId });
+                    }
+                    ModelState.AddModelError("slug", "Url kısaltması özel olmalıdır");
+                }
+                catch
+                {
+                    ModelState.AddModelError("", "Organizatör profili oluşturulurken bir hata oluştu");
+                }
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> DeleteOrganizer(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var organizer = await UnitOfWork.OrganizerRepository.FindByIdAsync(id);
+            if (organizer == null || organizer.UserId != GetGuid(User.Identity.GetUserId()) || organizer.IsDefault)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            }
+
+            return View(new OrganizerViewModel()
+            {
+                OrganizerId = organizer.OrganizerId,
+                Name = organizer.Name,
+                Description = organizer.Description,
+                Image = organizer.Image,
+                Website = organizer.Image,
+                Slug = organizer.Slug
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteOrganizer(Guid id)
+        {
+            try
+            {
+                var organizer = await UnitOfWork.OrganizerRepository.FindByIdAsync(id);
+                if (organizer == null || organizer.UserId != GetGuid(User.Identity.GetUserId()) || organizer.IsDefault)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+                }
+
+                UnitOfWork.OrganizerRepository.Remove(organizer);
+                await UnitOfWork.SaveChangesAsync();
+
+                return RedirectToAction("Organizer", "Account");
+            }
+            catch
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
+            }
         }
 
         [HttpPost]
@@ -280,7 +373,7 @@ namespace BiBilet.Web.Controllers
         private async Task SignInAsync(IdentityUser user, bool isPersistent)
         {
             var identity = await _userManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
-            AuthenticationManager.SignIn(new AuthenticationProperties() {IsPersistent = isPersistent}, identity);
+            AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = isPersistent }, identity);
         }
 
         private void AddErrors(IdentityResult result)

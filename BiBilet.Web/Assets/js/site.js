@@ -11,7 +11,7 @@ if (!window.jQuery) {
 $(function () {
 
     // Organizer description tinymce
-    var $organizerDescription = $("#myProfileForm").find("[data-tinymce='organizer']");
+    var $organizerDescription = $("#organizerForm").find("[data-tinymce='organizer']");
     if ($organizerDescription.length > 0) {
         tinymce.init({
             selector: "textarea[data-tinymce='organizer']",
@@ -30,7 +30,7 @@ $(function () {
     }
 
     // Organizer profile select list
-    var $profileSelect = $("#myProfileForm").find("#profile-select");
+    var $profileSelect = $("#organizerForm").find("#profile-select");
     if ($profileSelect.length > 0) {
         $($profileSelect).on("change", function () {
             window.location = $profileSelect.find("option:selected").data("url");

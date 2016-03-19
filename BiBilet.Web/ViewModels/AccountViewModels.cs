@@ -4,7 +4,7 @@ using System.Web.Mvc;
 
 namespace BiBilet.Web.ViewModels
 {
-    public class MyProfileViewModel
+    public class OrganizerViewModel
     {
         public Guid OrganizerId { get; set; }
 
@@ -36,6 +36,9 @@ namespace BiBilet.Web.ViewModels
         [DataType(DataType.Text)]
         [Display(Name = "Url Kısaltması")]
         public string Slug { get; set; }
+
+        public int EventCount { get; set; }
+        public bool IsRemovable { get; set; }
     }
 
     public class SettingsViewModel
