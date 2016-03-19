@@ -19,7 +19,7 @@ namespace BiBilet.Web
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                LoginPath = new PathString("/admin/login"),
+                LoginPath = new PathString("/account/login"),
                 Provider = new CookieAuthenticationProvider
                 {
                     OnValidateIdentity =
