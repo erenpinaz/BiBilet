@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using BiBilet.Domain.Entities.Application;
@@ -13,21 +14,25 @@ namespace BiBilet.Domain.Repositories.Application
         /// <summary>
         /// Returns a list of published events
         /// </summary>
+        /// <param name="userId"></param>
         /// <returns>List of published <see cref="Event"/></returns>
-        List<Event> GetEvents();
+        List<Event> GetEvents(Guid? userId = null);
 
         /// <summary>
         /// Asynchronously returns a list of published events
         /// </summary>
+        /// <param name="userId"></param>
         /// <returns>List of published <see cref="Event"/></returns>
-        Task<List<Event>> GetEventsAsync();
+        Task<List<Event>> GetEventsAsync(Guid? userId = null);
 
         /// <summary>
         /// Asynchronously returns a list of published events
         /// with cancellation support
         /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <param name="userId"></param>
         /// <returns>List of published <see cref="Event"/></returns>
-        Task<List<Event>> GetEventsAsync(CancellationToken cancellationToken);
+        Task<List<Event>> GetEventsAsync(CancellationToken cancellationToken, Guid? userId = null);
 
         /// <summary>
         /// Returns single published event

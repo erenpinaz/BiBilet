@@ -10,6 +10,14 @@ if (!window.jQuery) {
 
 $(function () {
 
+    // Bootstrap table resize fix
+    var $table = $("table[data-toggle='table']");
+    if ($table.length > 0) {
+        $(window).resize(function () {
+            $('table[data-toggle="table"]').bootstrapTable("resetView");
+        });
+    }
+
     // Organizer description tinymce
     var $organizerDescription = $("#organizerForm").find("[data-tinymce='organizer']");
     if ($organizerDescription.length > 0) {

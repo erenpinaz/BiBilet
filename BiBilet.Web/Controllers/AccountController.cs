@@ -89,10 +89,11 @@ namespace BiBilet.Web.Controllers
                 {
                     OrganizerId = Guid.NewGuid(),
                     Name = user.Name,
-                    Slug = string.Format("organizer-{0}", user.UserName.ToLowerInvariant()),
                     Description = string.Format("{0} kullanıcısının organizatör profili.", user.Name),
                     Image = "/assets/images/event-placeholder.png",
                     Website = string.Empty,
+                    Slug = string.Format("organizer-{0}", user.UserName.ToLowerInvariant()),
+                    IsDefault = true
                 });
 
                 var result = await _userManager.CreateAsync(user, model.Password);

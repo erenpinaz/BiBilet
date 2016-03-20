@@ -1,0 +1,43 @@
+﻿@using Microsoft.AspNet.Identity
+@{
+    ViewBag.Title = "Etkinliklerim";
+}
+
+<section id="userEvents">
+    <h1 class="page-header">
+        @ViewBag.Title
+        <small>
+            <a href="@Url.Action("CreateEvent", "Event")">Yeni etkinlik</a>
+        </small>
+    </h1>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <table id="user-events-table"
+                   data-toggle="table"
+                   data-locale="tr-TR"
+                   data-url="@Url.Action("PopulateUserEvents", "Event")"
+                   data-cache="false"
+                   data-height="500"
+                   data-pagination="true"
+                   data-page-size="10"
+                   data-page-list="[10, 20, 50]"
+                   data-search="true"
+                   data-show-columns="true"
+                   data-show-refresh="true">
+                <thead>
+                    <tr>
+                        <th data-field="eventid" data-visible="false">Event ID</th>
+                        <th data-field="title">Başlık</th>
+                        <th data-field="organizer">Organizatör</th>
+                        <th data-field="category">Kategori</th>
+                        <th data-field="topic">Konu</th>
+                        <th data-field="status">Yayın Durumu</th>
+                        <th data-field="startdate">Başlangıç Tarihi</th>
+                        <th data-field="enddate">Bitiş Tarihi</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</section>

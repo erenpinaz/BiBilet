@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading;
@@ -25,29 +26,36 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// <summary>
         /// Returns a list of published events
         /// </summary>
+        /// <param name="userId"></param>
         /// <returns>List of published <see cref="Event"/></returns>
-        public virtual List<Event> GetEvents()
+        public virtual List<Event> GetEvents(Guid? userId)
         {
-            return Set.Where(e => e.Published).ToList();
+            var events = userId.HasValue ? Set.Where(e => e.Published && e.Organizer.UserId == userId) : Set.Where(e => e.Published);
+            return events.ToList();
         }
 
         /// <summary>
         /// Asynchronously returns a list of published events
         /// </summary>
+        /// <param name="userId"></param>
         /// <returns>List of published <see cref="Event"/></returns>
-        public virtual Task<List<Event>> GetEventsAsync()
+        public virtual Task<List<Event>> GetEventsAsync(Guid? userId)
         {
-            return Set.Where(e => e.Published).ToListAsync();
+            var events = userId.HasValue ? Set.Where(e => e.Published && e.Organizer.UserId == userId) : Set.Where(e => e.Published);
+            return events.ToListAsync();
         }
 
         /// <summary>
         /// Asynchronously returns a list of published events
         /// with cancellation support
         /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <param name="userId"></param>
         /// <returns>List of published <see cref="Event"/></returns>
-        public virtual Task<List<Event>> GetEventsAsync(CancellationToken cancellationToken)
+        public virtual Task<List<Event>> GetEventsAsync(CancellationToken cancellationToken, Guid? userId)
         {
-            return Set.Where(e => e.Published).ToListAsync(cancellationToken);
+            var events = userId.HasValue ? Set.Where(e => e.Published && e.Organizer.UserId == userId) : Set.Where(e => e.Published);
+            return events.ToListAsync(cancellationToken);
         }
 
         /// <summary>

@@ -12,12 +12,6 @@ namespace BiBilet.Web
             // Force lowercase URLs
             routes.LowercaseUrls = true;
 
-            // Route: Event Details
-            routes.MapRoute(
-                "Event_Details",
-                "event/{slug}",
-                new {controller = "Event", action = "Details"});
-
             // Route: Default
             routes.MapRoute(
                 "Default",

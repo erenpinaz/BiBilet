@@ -58,11 +58,11 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Hoşgeldin, @User.Identity.Name <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a href="#">Biletler</a>
+                                <a href="#">Biletlerim</a>
                             </li>
                             <li role="separator" class="divider"></li>
                             <li>
-                                <a href="#">Etkinlikler</a>
+                                <a href="@Url.Action("MyEvents", "Event")">Etkinliklerim</a>
                             </li>
                             <li>
                                 <a href="@Url.Action("Organizer", "Account")">Organizatör Profili</a>
@@ -98,7 +98,7 @@
                         <h1>Bi' Bilet</h1>
                         <p>Çevrenizdeki etkinliklere katılın veya kendiniz bir etkinlik düzenleyin.</p>
                         <p>
-                            <a class="btn btn-lg btn-primary" href="#" role="button">Etkinliğini Oluştur</a>
+                            <a class="btn btn-lg btn-primary" href="@Url.Action("CreateEvent", "Event")" role="button">Etkinliğini Oluştur</a>
                         </p>
                     </div>
                 </div>

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using BiBilet.Domain;
 using BiBilet.Web.ViewModels;
+using Microsoft.AspNet.Identity;
 
 namespace BiBilet.Web.Controllers
 {
@@ -13,6 +14,13 @@ namespace BiBilet.Web.Controllers
         public EventController(IUnitOfWork unitOfWork)
             : base(unitOfWork)
         {
+        }
+
+        [Authorize]
+        [HttpGet]
+        public ActionResult MyEvents()
+        {
+            return View();
         }
 
         [HttpGet]
@@ -52,5 +60,45 @@ namespace BiBilet.Web.Controllers
                 }).ToList()
             });
         }
+
+        [HttpGet]
+        public async Task<ActionResult> PopulateUserEvents()
+        {
+            if (!Request.IsAjaxRequest())
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var events = await UnitOfWork.EventRepository.GetEventsAsync(GetGuid(User.Identity.GetUserId()));
+            var json = events.OrderBy(e => e.StartDate).Select(e => new
+            {
+                eventid = e.EventId,
+                title = e.Title,
+                organizer = e.Organizer.Name,
+                category = e.Category.Name,
+                topic = string.Format("{0} / {1}", e.Topic.Name, e.SubTopic.Name),
+                status = e.Published,
+                startdate = e.StartDate,
+                enddate = e.EndDate
+            });
+
+            return Json(json, JsonRequestBehavior.AllowGet);
+        }
+
+        #region Helpers
+
+        /// <summary>
+        /// Converts string to Guid
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private static Guid GetGuid(string value)
+        {
+            Guid result;
+            Guid.TryParse(value, out result);
+            return result;
+        }
+
+        #endregion
     }
 }
