@@ -24,7 +24,7 @@ namespace BiBilet.Web
                 .Include("~/assets/js/tinymce/tinymce.min.js"));
 
             // Enables versioning & minifying ( Web.Config override )
-            BundleTable.EnableOptimizations = true;
+            //BundleTable.EnableOptimizations = true;
         }
     }
 }
