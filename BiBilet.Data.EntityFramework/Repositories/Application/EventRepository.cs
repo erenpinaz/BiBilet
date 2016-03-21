@@ -30,7 +30,9 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// <returns>List of published <see cref="Event"/></returns>
         public virtual List<Event> GetEvents(Guid? userId)
         {
-            var events = userId.HasValue ? Set.Where(e => e.Published && e.Organizer.UserId == userId) : Set.Where(e => e.Published);
+            var events = userId.HasValue
+                ? Set.Where(e => e.Published && e.Organizer.UserId == userId)
+                : Set.Where(e => e.Published);
             return events.ToList();
         }
 
@@ -41,7 +43,9 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// <returns>List of published <see cref="Event"/></returns>
         public virtual Task<List<Event>> GetEventsAsync(Guid? userId)
         {
-            var events = userId.HasValue ? Set.Where(e => e.Published && e.Organizer.UserId == userId) : Set.Where(e => e.Published);
+            var events = userId.HasValue
+                ? Set.Where(e => e.Published && e.Organizer.UserId == userId)
+                : Set.Where(e => e.Published);
             return events.ToListAsync();
         }
 
@@ -54,7 +58,9 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// <returns>List of published <see cref="Event"/></returns>
         public virtual Task<List<Event>> GetEventsAsync(CancellationToken cancellationToken, Guid? userId)
         {
-            var events = userId.HasValue ? Set.Where(e => e.Published && e.Organizer.UserId == userId) : Set.Where(e => e.Published);
+            var events = userId.HasValue
+                ? Set.Where(e => e.Published && e.Organizer.UserId == userId)
+                : Set.Where(e => e.Published);
             return events.ToListAsync(cancellationToken);
         }
 
