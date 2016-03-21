@@ -10,6 +10,19 @@ if (!window.jQuery) {
 
 $(function () {
 
+    // Update selected item of a select menu when browser back button pressed
+    // Credits: http://stackoverflow.com/questions/4370819/select-menu-not-being-restored-when-back-button-used/28302447#28302447
+    $("select").each(function () {
+        var select = $(this);
+        var selectedValue = select.find("option[selected]").val();
+
+        if (selectedValue) {
+            select.val(selectedValue);
+        } else {
+            select.prop("selectedIndex", 0);
+        }
+    });
+
     // Bootstrap table resize fix
     var $table = $("table[data-toggle='table']");
     if ($table.length > 0) {
