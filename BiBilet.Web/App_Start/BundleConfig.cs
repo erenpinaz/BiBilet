@@ -17,7 +17,7 @@ namespace BiBilet.Web
                 .Include("~/assets/js/bootstrap-table/bootstrap-table.js")
                 .Include("~/assets/js/bootstrap-table/locale/bootstrap-table-tr-TR.js")
                 .Include("~/assets/js/plupload/moxie.js")
-                .Include("~/assets/js/plupload/plupload.js")
+                .Include("~/assets/js/plupload/plupload.dev.js")
                 .Include("~/assets/js/site.js"));
 
             bundles.Add(new ScriptBundle("~/assets/js/tinymce/tinymce.min.js")
