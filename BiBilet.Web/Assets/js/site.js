@@ -61,9 +61,16 @@ $(function () {
     // Organizer profile image uploader
     var $organizerImageUploader = $("#organizer-image-uploader");
     if ($organizerImageUploader.length > 0) {
+        var $preview = $organizerImageUploader.find("#preview").get(0);
+        var $progress = $(
+                "<div id='progress' class='progress'>" +
+                "<div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='0' aria-valuemin='0' aria-valuemax='100' style='width:0'>0</div>" +
+                "</div>");
+        var $image = $organizerImageUploader.find("#Image").get(0);
+
         var uploader = new plupload.Uploader({
             runtimes: "html5,flash",
-            browse_button: "image-picker",
+            browse_button: "picker",
             container: "organizer-image-uploader",
             url: $organizerImageUploader.data("url"),
             max_file_size: "5mb",
@@ -96,12 +103,20 @@ $(function () {
             up.start();
         });
 
+        uploader.bind("UploadProgress", function (up, file) {
+            var $progress = $organizerImageUploader.find("#progress").find(".progress-bar").get(0);
+            if ($progress) {
+                $($progress)
+                    .text(file.percent)
+                    .css("width", file.percent + "%")
+                    .attr("aria-valuenow", file.percent);
+            }
+        });
+
         uploader.bind("FileUploaded", function (up, file, data) {
             var response = jQuery.parseJSON(data.response);
-            var $preview = $organizerImageUploader.find("img").get(0);
-            var $image = $organizerImageUploader.find("#Image").get(0);
 
-            if (response && $preview && $image) {
+            if (response.path && $preview && $image) {
                 $($preview).attr("src", response.path);
                 $($image).attr("value", response.path);
             }

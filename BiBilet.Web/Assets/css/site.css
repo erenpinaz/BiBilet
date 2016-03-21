@@ -6785,15 +6785,7 @@ i.glyphicon {
   font-weight: bold;
 }
 #organizer-image-uploader {
-  max-width: 240px;
   position: relative;
-}
-#organizer-image-uploader #image-picker {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-}
-#organizer-image-uploader .preview-wrapper {
   width: 240px;
   height: 240px;
   display: table-cell;
@@ -6802,13 +6794,14 @@ i.glyphicon {
   background-color: #eee;
   border: 1px solid #ddd;
 }
-#organizer-image-uploader .preview-wrapper img {
+#organizer-image-uploader #picker {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+#organizer-image-uploader #preview {
   max-width: 100%;
 }
-#organizer-image-uploader #Image {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  height: 0;
-  visibility: hidden;
+#organizer-image-uploader #progress {
+  margin: 10px;
 }

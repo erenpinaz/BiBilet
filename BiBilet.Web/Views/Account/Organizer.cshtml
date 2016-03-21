@@ -67,10 +67,11 @@
                     @Html.LabelFor(m => m.Image, new {@class = "col-sm-2 control-label"})
                     <div class="col-sm-10">
                         <div id="organizer-image-uploader" data-url="@Url.Action("UploadOrganizerImage", "Account", new {id = Model.OrganizerId})">
-                            <button type="button" id="image-picker" class="btn btn-sm btn-default">
+                            <button id="picker" type="button" class="btn btn-sm btn-default">
                                 <span class="glyphicon glyphicon-camera"></span></button>
-                            <div class="preview-wrapper">
-                                <img src="@Model.Image" alt="Organizatör Resmi"/>
+                            <img id="preview" src="@Model.Image" alt="Organizatör Resmi"/>
+                            <div id="progress" class="progress">
+                                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0;">0</div>
                             </div>
                             @Html.HiddenFor(m => m.Image)
                         </div>
