@@ -8,7 +8,7 @@
 <div class="row">
     <div class="col-md-offset-2 col-md-8">
         <section id="organizerForm">
-            @using (Html.BeginForm("Organizer", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            @using (Html.BeginForm("Organizer", "Account", new {id = Model.OrganizerId}, FormMethod.Post, new {@class = "form-horizontal", role = "form"}))
             {
                 @Html.AntiForgeryToken()
 
@@ -16,15 +16,15 @@
 
                 @Html.ValidationSummary(true)
                 @Html.HiddenFor(m => m.OrganizerId)
+                @Html.HiddenFor(m => m.IsRemovable)
 
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="profile-select">Profil</label>
                     <div class="col-sm-10">
                         <select id="profile-select" class="form-control">
-                            @foreach (var profile in (List<Organizer>)ViewBag.Organizers)
+                            @foreach (var profile in (List<Organizer>) ViewBag.Organizers)
                             {
-                                <option data-url="@Url.Action("Organizer", "Account", new {id = profile.OrganizerId})" value="@profile.OrganizerId"
-                                        @(Model.OrganizerId == profile.OrganizerId ? "selected" : string.Empty)>
+                                <option data-url="@Url.Action("Organizer", "Account", new {id = profile.OrganizerId})" @(Model.OrganizerId == profile.OrganizerId ? "selected" : string.Empty)>
                                     @profile.Name
                                 </option>
                             }
@@ -40,47 +40,53 @@
                             @if (Model.IsRemovable)
                             {
                                 <li>
-                                    <a href="@Url.Action("DeleteOrganizer", "Account", new { id = Model.OrganizerId })">Bu profili sil</a>
+                                    <a href="@Url.Action("DeleteOrganizer", "Account", new {id = Model.OrganizerId})">Bu profili sil</a>
                                 </li>
                             }
                         </ul>
                     </div>
                 </div>
 
-                <hr />
+                <hr/>
 
                 <div class="form-group">
-                    @Html.LabelFor(m => m.Name, new { @class = "col-sm-2 control-label" })
+                    @Html.LabelFor(m => m.Name, new {@class = "col-sm-2 control-label"})
                     <div class="col-sm-10">
-                        @Html.EditorFor(m => m.Name, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.Name) } })
+                        @Html.EditorFor(m => m.Name, new {htmlAttributes = new {@class = "form-control", placeholder = Html.DisplayNameFor(m => m.Name)}})
                         @Html.ValidationMessageFor(m => m.Name)
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(m => m.Description, new { @class = "col-sm-2 control-label" })
+                    @Html.LabelFor(m => m.Description, new {@class = "col-sm-2 control-label"})
                     <div class="col-sm-10">
-                        @Html.EditorFor(m => m.Description, new { htmlAttributes = new { data_tinymce = "organizer", @class = "form-control", placeholder = Html.DisplayNameFor(m => m.Description) } })
+                        @Html.EditorFor(m => m.Description, new {htmlAttributes = new {data_tinymce = "organizer", @class = "form-control", placeholder = Html.DisplayNameFor(m => m.Description)}})
                         @Html.ValidationMessageFor(m => m.Description)
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(m => m.Image, new { @class = "col-sm-2 control-label" })
+                    @Html.LabelFor(m => m.Image, new {@class = "col-sm-2 control-label"})
                     <div class="col-sm-10">
-                        @Html.EditorFor(m => m.Image, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.Image) } })
-                        @Html.ValidationMessageFor(m => m.Image)
+                        <div id="organizer-image-uploader" data-url="@Url.Action("UploadOrganizerImage", "Account", new {id = Model.OrganizerId})">
+                            <button type="button" id="image-picker" class="btn btn-sm btn-default">
+                                <span class="glyphicon glyphicon-camera"></span></button>
+                            <div class="preview-wrapper">
+                                <img src="@Model.Image" alt="Organizatör Resmi"/>
+                            </div>
+                            @Html.HiddenFor(m => m.Image)
+                        </div>
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(m => m.Website, new { @class = "col-sm-2 control-label" })
+                    @Html.LabelFor(m => m.Website, new {@class = "col-sm-2 control-label"})
                     <div class="col-sm-10">
-                        @Html.EditorFor(m => m.Website, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.Website) } })
+                        @Html.EditorFor(m => m.Website, new {htmlAttributes = new {@class = "form-control", placeholder = Html.DisplayNameFor(m => m.Website)}})
                         @Html.ValidationMessageFor(m => m.Website)
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(m => m.Slug, new { @class = "col-sm-2 control-label" })
+                    @Html.LabelFor(m => m.Slug, new {@class = "col-sm-2 control-label"})
                     <div class="col-sm-10">
-                        @Html.EditorFor(m => m.Slug, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.Slug) } })
+                        @Html.EditorFor(m => m.Slug, new {htmlAttributes = new {@class = "form-control", placeholder = Html.DisplayNameFor(m => m.Slug)}})
                         @Html.ValidationMessageFor(m => m.Slug)
                     </div>
                 </div>

@@ -44,4 +44,56 @@ $(function () {
             window.location = $profileSelect.find("option:selected").data("url");
         });
     }
+
+    // Organizer profile image uploader
+    var $organizerImageUploader = $("#organizer-image-uploader");
+    if ($organizerImageUploader.length > 0) {
+        var uploader = new plupload.Uploader({
+            runtimes: "html5,flash",
+            browse_button: "image-picker",
+            container: "organizer-image-uploader",
+            url: $organizerImageUploader.data("url"),
+            max_file_size: "5mb",
+            dragdrop: false,
+            multiple_queues: false,
+            multi_selection: false,
+            max_file_count: 1,
+            resize: {
+                width: 240,
+                height: 240,
+                crop: true
+            },
+            filters: [
+                { title: "Image files", extensions: "jpg,jpeg,gif,png" }
+            ],
+            flash_swf_url: "/assets/js/plupload/Moxie.swf",
+            silverlight_xap_url: "/assets/js/plupload/Moxie.xap"
+        });
+
+        uploader.bind("Init", function (up, params) {
+            $("#runtime").html("Current runtime: " + params.runtime);
+        });
+
+        uploader.bind("Browse", function () {
+            uploader.splice();
+            uploader.refresh();
+        });
+
+        uploader.bind("FilesAdded", function (up, file) {
+            up.start();
+        });
+
+        uploader.bind("FileUploaded", function (up, file, data) {
+            var response = jQuery.parseJSON(data.response);
+            var $preview = $organizerImageUploader.find("img").get(0);
+            var $image = $organizerImageUploader.find("#Image").get(0);
+
+            if (response && $preview && $image) {
+                $($preview).attr("src", response.path);
+                $($image).attr("value", response.path);
+            }
+        });
+
+        uploader.init();
+    }
 });
