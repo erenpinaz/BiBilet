@@ -30,7 +30,7 @@ namespace BiBilet.Data.EntityFramework.Configuration.Application
                 .HasColumnName("Description")
                 .HasColumnType("nvarchar")
                 .IsMaxLength()
-                .IsRequired();
+                .IsOptional();
 
             Property(x => x.Image)
                 .HasColumnName("Image")
