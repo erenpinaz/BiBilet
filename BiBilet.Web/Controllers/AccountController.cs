@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -30,7 +29,8 @@ namespace BiBilet.Web.Controllers
             // Create user policy
             userManager.UserValidator = new UserValidator<IdentityUser, Guid>(userManager)
             {
-                RequireUniqueEmail = true
+                RequireUniqueEmail = true,
+                AllowOnlyAlphanumericUserNames = true
             };
 
             // Create password policy
@@ -60,16 +60,17 @@ namespace BiBilet.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Get the user from the database by user name and password
                 var user = await _userManager.FindAsync(model.UserName, model.Password);
                 if (user != null)
                 {
+                    // If exists, sign in
                     await SignInAsync(user, model.RememberMe);
                     return RedirectToLocal(returnUrl);
                 }
                 ModelState.AddModelError("", "Hatalı kullanıcı adı veya şifre girdiniz");
             }
 
-            // If we got this far, something failed, redisplay form
             return View(model);
         }
 
@@ -87,8 +88,11 @@ namespace BiBilet.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Create user
                 var user = new IdentityUser {UserName = model.UserName, Name = model.Name, Email = model.Email};
-                var organizer = new Organizer()
+
+                // Create default organizer profile for the user
+                var organizer = new Organizer
                 {
                     OrganizerId = Guid.NewGuid(),
                     Name = user.Name,
@@ -98,25 +102,30 @@ namespace BiBilet.Web.Controllers
                 };
                 organizer.Slug = string.Format("o-{0}", organizer.OrganizerId.ToString("N"));
 
+                // Add default organizer profile to the user
                 user.Organizers.Add(organizer);
 
+                // Save user to database
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    // If succeeded, sign in
                     await SignInAsync(user, false);
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
             }
 
-            // If we got this far, something failed, redisplay form
             return View(model);
         }
 
         [HttpGet]
         public async Task<ActionResult> Settings(string message)
         {
+            // Get the current user from the database by user name
             var user = await _userManager.FindByIdAsync(GetGuid(User.Identity.GetUserId()));
+
+            // Map the user to view model
             var model = new SettingsViewModel
             {
                 UserName = user.UserName,
@@ -135,28 +144,34 @@ namespace BiBilet.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByNameAsync(User.Identity.GetUserName());
+                // Get the current user from the database by user name
+                var user = await _userManager.FindByIdAsync(GetGuid(User.Identity.GetUserId()));
                 if (user != null)
                 {
+                    // Check the password
                     if (await _userManager.CheckPasswordAsync(user, model.OldPassword))
                     {
                         user.Name = model.Name;
                         user.Email = model.Email;
 
+                        // If the password is correct, update the user record
                         var result = await _userManager.UpdateAsync(user);
                         if (result.Succeeded)
                         {
                             if (model.NewPassword != null && model.ConfirmPassword != null)
                             {
+                                // Change the old password if new password field has value
                                 result =
                                     await
                                         _userManager.ChangePasswordAsync(user.Id, model.OldPassword, model.NewPassword);
                                 if (result.Succeeded)
                                 {
+                                    // If succeeded, sign out
                                     AuthenticationManager.SignOut();
                                     return RedirectToAction("Login", "Account");
                                 }
                                 AddErrors(result);
+
                                 return View(model);
                             }
                             return RedirectToAction("Settings", "Account",
@@ -176,9 +191,11 @@ namespace BiBilet.Web.Controllers
         [HttpGet]
         public async Task<ActionResult> Organizer(Guid? id, string message)
         {
+            // Get all the user organizers from the database to populate profile list
             var organizers =
                 await UnitOfWork.OrganizerRepository.GetUserOrganizersAsync(GetGuid(User.Identity.GetUserId()));
 
+            // Return the first organizer if no organizer id provided
             Organizer organizer;
             if (id.HasValue)
             {
@@ -193,6 +210,7 @@ namespace BiBilet.Web.Controllers
                 organizer = organizers.First();
             }
 
+            // Map the organizer to view model
             var model = new OrganizerViewModel
             {
                 OrganizerId = organizer.OrganizerId,
@@ -215,11 +233,13 @@ namespace BiBilet.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> UpdateOrganizer(Guid id, OrganizerViewModel model)
         {
+            // Get all the user organizers from the database to populate profile list
             var organizers =
                 await UnitOfWork.OrganizerRepository.GetUserOrganizersAsync(GetGuid(User.Identity.GetUserId()));
 
             if (ModelState.IsValid)
             {
+                // Get the selected organizer profile
                 var organizer = organizers.FirstOrDefault(o => o.OrganizerId.Equals(id));
                 if (organizer != null)
                 {
@@ -233,6 +253,7 @@ namespace BiBilet.Web.Controllers
 
                         if (await IsOrganizerSlugExists(model.Slug, organizer.OrganizerId))
                         {
+                            // If the organizer slug is unique, update the organizer record
                             UnitOfWork.OrganizerRepository.Update(organizer);
                             await UnitOfWork.SaveChangesAsync();
 
@@ -243,6 +264,7 @@ namespace BiBilet.Web.Controllers
                     }
                     catch
                     {
+                        //TODO: Log error
                         ModelState.AddModelError("", "Organizatör profili güncellenirken bir hata oluştu");
                     }
                 }
@@ -260,7 +282,8 @@ namespace BiBilet.Web.Controllers
         [HttpGet]
         public async Task<ActionResult> CreateOrganizer()
         {
-            var organizer = new Organizer()
+            // Create organizer
+            var organizer = new Organizer
             {
                 OrganizerId = Guid.NewGuid(),
                 Name = "İsimsiz organizatör",
@@ -272,6 +295,7 @@ namespace BiBilet.Web.Controllers
 
             try
             {
+                // Save organizer to the database
                 UnitOfWork.OrganizerRepository.Add(organizer);
                 await UnitOfWork.SaveChangesAsync();
             }
@@ -286,12 +310,21 @@ namespace BiBilet.Web.Controllers
         [HttpGet]
         public async Task<ActionResult> DeleteOrganizer(Guid id)
         {
-            var organizer = await UnitOfWork.OrganizerRepository.FindByIdAsync(id);
-            if (organizer == null || organizer.UserId != GetGuid(User.Identity.GetUserId()) || organizer.IsDefault)
+            // Get the user organizer by id from the database
+            var organizer =
+                await UnitOfWork.OrganizerRepository.GetUserOrganizerAsync(id, GetGuid(User.Identity.GetUserId()));
+            if (organizer == null)
             {
+                // If organizer is null or not belong to the current user
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound);
             }
+            if (organizer.IsDefault)
+            {
+                // If the organizer is default organizer
+                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+            }
 
+            // Map organizer to view model
             return View(new OrganizerViewModel
             {
                 OrganizerId = organizer.OrganizerId,
@@ -309,17 +342,27 @@ namespace BiBilet.Web.Controllers
         {
             try
             {
-                var organizer = await UnitOfWork.OrganizerRepository.FindByIdAsync(id);
-                if (organizer == null || organizer.UserId != GetGuid(User.Identity.GetUserId()) || organizer.IsDefault)
+                // Get the user organizer by id from the database
+                var organizer =
+                    await UnitOfWork.OrganizerRepository.GetUserOrganizerAsync(id, GetGuid(User.Identity.GetUserId()));
+                if (organizer == null)
                 {
+                    // If organizer is null or not belong to the current user
                     return new HttpStatusCodeResult(HttpStatusCode.NotFound);
                 }
+                if (organizer.IsDefault)
+                {
+                    // If the organizer is default organizer
+                    return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                }
 
+                // Delete organizer record from the database
                 UnitOfWork.OrganizerRepository.Remove(organizer);
                 await UnitOfWork.SaveChangesAsync();
 
                 if (organizer.Image != PlaceholderImagePath)
                 {
+                    // If not the placeholder image, delete the organizer image upload directory
                     DiskUtils.DeleteDirectory(Server.MapPath(Path.GetDirectoryName(organizer.Image)));
                 }
 
@@ -327,32 +370,40 @@ namespace BiBilet.Web.Controllers
             }
             catch
             {
+                //TODO: Log error
                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
             }
         }
 
         [HttpPost]
-        public ActionResult UploadOrganizerImage(Guid id)
+        public async Task<ActionResult> UploadOrganizerImage(Guid id)
         {
-            var organizer = UnitOfWork.OrganizerRepository.GetUserOrganizer(id, GetGuid(User.Identity.GetUserId()));
+            // Get the user organizer from the database
+            var organizer =
+                await UnitOfWork.OrganizerRepository.GetUserOrganizerAsync(id, GetGuid(User.Identity.GetUserId()));
             if (organizer == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
+                // If organizer is null or not belong to the current user
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
             }
 
             try
             {
+                // Get the file from the current HTTP request
                 var file = Request.Files[0];
                 if (file != null)
                 {
-                    var fileName = "organizer-image.jpg";
+                    const string fileName = "organizer-image.jpg";
 
                     var absolutePath = Server.MapPath(Path.Combine(UploadPath, id.ToString()));
+
+                    // If not exists, create the physical upload directory
                     if (!Directory.Exists(absolutePath))
                     {
                         Directory.CreateDirectory(absolutePath);
                     }
 
+                    // Save image to the physical upload directory
                     DiskUtils.SaveImage(file.InputStream, Path.Combine(absolutePath, fileName));
 
                     return Json(new
@@ -368,6 +419,7 @@ namespace BiBilet.Web.Controllers
             }
             catch
             {
+                //TODO: Log error
                 return Json(new {success = false});
             }
         }
@@ -392,12 +444,12 @@ namespace BiBilet.Web.Controllers
         #region Helpers
 
         /// <summary>
-        ///     Returns the authentication middleware for the current request
+        /// Returns the authentication middleware for the current request
         /// </summary>
         private IAuthenticationManager AuthenticationManager => HttpContext.GetOwinContext().Authentication;
 
         /// <summary>
-        ///     Asynchronous user sign in
+        /// Asynchronous user sign in
         /// </summary>
         /// <param name="user"></param>
         /// <param name="isPersistent"></param>
@@ -409,7 +461,7 @@ namespace BiBilet.Web.Controllers
         }
 
         /// <summary>
-        ///     Adds identity result errors to model state
+        /// Adds identity result errors to model state
         /// </summary>
         /// <param name="result"></param>
         private void AddErrors(IdentityResult result)
@@ -421,8 +473,8 @@ namespace BiBilet.Web.Controllers
         }
 
         /// <summary>
-        ///     Redirects to the given return url and to default
-        ///     if no url is provided
+        /// Redirects to the given return url and to default
+        /// if no url is provided
         /// </summary>
         /// <param name="returnUrl"></param>
         /// <returns></returns>
@@ -436,7 +488,7 @@ namespace BiBilet.Web.Controllers
         }
 
         /// <summary>
-        ///     Converts string to Guid
+        /// Converts string to Guid
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -448,7 +500,7 @@ namespace BiBilet.Web.Controllers
         }
 
         /// <summary>
-        ///     Checks if organizer slug is unique
+        /// Checks if organizer slug is unique
         /// </summary>
         /// <param name="slug"></param>
         /// <param name="organizerId"></param>

@@ -36,6 +36,7 @@ namespace BiBilet.Web.Utils
             }
             catch
             {
+                //TODO: Log error
                 return false;
             }
             finally
@@ -66,6 +67,7 @@ namespace BiBilet.Web.Utils
             }
             catch
             {
+                //TODO: Log error
                 return false;
             }
         }
@@ -82,7 +84,7 @@ namespace BiBilet.Web.Utils
                 if (filePath == null)
                     throw new ArgumentNullException(nameof(filePath));
 
-                if (System.IO.File.Exists(filePath))
+                if (File.Exists(filePath))
                 {
                     var fInfo = new FileInfo(filePath);
                     fInfo.Delete();
@@ -92,12 +94,13 @@ namespace BiBilet.Web.Utils
             }
             catch
             {
+                //TODO: Log error
                 return false;
             }
         }
 
         /// <summary>
-        /// Returns an <see cref="ImageCodecInfo"/> for given mime type
+        /// Returns an <see cref="ImageCodecInfo" /> for given mime type
         /// </summary>
         /// <param name="mimeType"></param>
         /// <returns></returns>
