@@ -64,6 +64,9 @@ namespace BiBilet.Web.Controllers
                 var user = await _userManager.FindAsync(model.UserName, model.Password);
                 if (user != null)
                 {
+                    // Re-generate security stamp
+                    await _userManager.UpdateSecurityStampAsync(user.Id);
+
                     // If exists, sign in
                     await SignInAsync(user, model.RememberMe);
                     return RedirectToLocal(returnUrl);
