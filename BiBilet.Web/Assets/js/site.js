@@ -10,6 +10,9 @@ if (!window.jQuery) {
 
 $(function () {
 
+    // Initialize moment.js
+    moment.locale("tr");
+
     // Update selected item of a select menu when browser back button pressed
     // Credits: http://stackoverflow.com/questions/4370819/select-menu-not-being-restored-when-back-button-used/28302447#28302447
     $("select").each(function () {
@@ -62,10 +65,6 @@ $(function () {
     var $organizerImageUploader = $("#organizer-image-uploader");
     if ($organizerImageUploader.length > 0) {
         var $preview = $organizerImageUploader.find("#preview").get(0);
-        var $progress = $(
-                "<div id='progress' class='progress'>" +
-                "<div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='0' aria-valuemin='0' aria-valuemax='100' style='width:0'>0</div>" +
-                "</div>");
         var $image = $organizerImageUploader.find("#Image").get(0);
 
         var uploader = new plupload.Uploader({
@@ -125,3 +124,77 @@ $(function () {
         uploader.init();
     }
 });
+
+/* ========================
+    Event Bootstrap Table
+   ======================== */
+
+// ===================
+// => Table Formatters
+// ===================
+
+// Event Title Formatter
+function eventTitleFormatter(value, row) {
+    return [
+        value,
+        "<ul class='list-unstyled list-inline'>",
+        "<li><a class='update' href='/event/updateevent?id=" + row.eventid + "'>Güncelle</a></li>",
+        "<li><a class='remove' href='/event/deleteevent?id=" + row.eventid + "'>Sil</a></li>",
+        "</ul>"
+    ].join("");
+}
+
+// Event Status Formatter
+function eventStatusFormatter(value) {
+    if (value) {
+        return "<span class='text-success'>Yayında</span>";
+    } else {
+        return "<span class='text-warning'>Taslak</span>";
+    }
+}
+
+// Json Date Formatter
+function jsonDateFormatter(value) {
+    if (value) {
+        return "<abbr class='initialism' title='" + moment(value).format() + "'>" + moment(value).format("LLLL") + "</abbr>";
+    }
+    return "-";
+}
+
+/* ====================
+    Utils
+   ==================== */
+
+// String.format
+// http://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format
+if (!String.format) {
+    String.format = function (format) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        return format.replace(/{(\d+)}/g, function (match, number) {
+            return typeof args[number] != "undefined"
+                ? args[number]
+                : match;
+        });
+    };
+}
+
+// Slug formatter
+// http://stackoverflow.com/questions/1053902/how-to-convert-a-title-to-a-url-slug-in-jquery
+function convertToSlug(url) {
+    return url
+        .toLowerCase()
+        .replace(/ /g, "-")
+        .replace(/[^\w-]+/g, "");
+}
+
+// IEC (1024) file size prefix
+// http://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable
+function fileSizeIEC(a, b, c, d, e) {
+    return (b = Math, c = b.log, d = 1024, e = c(a) / c(d) | 0, a / b.pow(d, e)).toFixed(2) + " " + (e ? "KMGTPEZY"[--e] + "iB" : "Bytes");
+}
+
+// SI (1000) file size prefix
+// http://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable
+function fileSizeSI(a, b, c, d, e) {
+    return (b = Math, c = b.log, d = 1e3, e = c(a) / c(d) | 0, a / b.pow(d, e)).toFixed(2) + " " + (e ? "kMGTPEZY"[--e] + "B" : "Bytes");
+}

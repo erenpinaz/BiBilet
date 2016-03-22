@@ -1,5 +1,4 @@
-﻿@using Microsoft.AspNet.Identity
-@{
+﻿@{
     ViewBag.Title = "Etkinliklerim";
 }
 
@@ -13,7 +12,7 @@
 
     <div class="panel panel-default">
         <div class="panel-body">
-            <table id="user-events-table"
+            <table id="events-table"
                    data-toggle="table"
                    data-locale="tr-TR"
                    data-url="@Url.Action("PopulateUserEvents", "Event")"
@@ -28,13 +27,13 @@
                 <thead>
                 <tr>
                     <th data-field="eventid" data-visible="false">Event ID</th>
-                    <th data-field="title">Başlık</th>
+                    <th data-field="title" data-formatter="eventTitleFormatter">Başlık</th>
                     <th data-field="organizer">Organizatör</th>
                     <th data-field="category">Kategori</th>
                     <th data-field="topic">Konu</th>
-                    <th data-field="status">Yayın Durumu</th>
-                    <th data-field="startdate">Başlangıç Tarihi</th>
-                    <th data-field="enddate">Bitiş Tarihi</th>
+                    <th data-field="status" data-formatter="eventStatusFormatter">Yayın Durumu</th>
+                    <th data-field="startdate" data-formatter="jsonDateFormatter">Başlangıç Tarihi</th>
+                    <th data-field="enddate" data-formatter="jsonDateFormatter" data-visible="false">Bitiş Tarihi</th>
                 </tr>
                 </thead>
             </table>
