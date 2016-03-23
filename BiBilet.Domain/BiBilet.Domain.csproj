@@ -50,8 +50,8 @@
     <Compile Include="Entities\Application\Category.cs" />
     <Compile Include="Entities\Application\Event.cs" />
     <Compile Include="Entities\Application\Organizer.cs" />
+    <Compile Include="Repositories\Application\ISubTopicRepository.cs" />
     <Compile Include="Repositories\Application\IOrganizerRepository.cs" />
-    <Compile Include="Repositories\Application\ICategoryRepository.cs" />
     <Compile Include="Repositories\Application\IEventRepository.cs" />
     <Compile Include="Repositories\Identity\IExternalLoginRepository.cs" />
     <Compile Include="Repositories\Identity\IRoleRepository.cs" />

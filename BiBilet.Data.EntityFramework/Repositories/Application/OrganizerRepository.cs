@@ -27,7 +27,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// Returns a list of organizer
         /// </summary>
         /// <param name="userId"></param>
-        /// <returns>A <see cref="Organizer" /></returns>
+        /// <returns>A list of <see cref="Organizer" /></returns>
         public List<Organizer> GetUserOrganizers(Guid userId)
         {
             return Set.Where(o => o.UserId.Equals(userId)).ToList();

@@ -55,5 +55,31 @@ namespace BiBilet.Domain.Repositories.Application
         /// <param name="cancellationToken"></param>
         /// <returns>A published <see cref="Event"/></returns>
         Task<Event> GetEventAsync(string slug, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Returns single user event
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userId"></param>
+        /// <returns>An <see cref="Event" /></returns>
+        Event GetUserEvent(Guid id, Guid userId);
+
+        /// <summary>
+        /// Asynchronously returns single user event
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userId"></param>
+        /// <returns>An <see cref="Event" /></returns>
+        Task<Event> GetUserEventAsync(Guid id, Guid userId);
+
+        /// <summary>
+        /// Asynchronously returns single user event
+        /// with cancellation support
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>An <see cref="Event" /></returns>
+        Task<Event> GetUserEventAsync(Guid id, Guid userId, CancellationToken cancellationToken);
     }
 }

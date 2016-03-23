@@ -3,9 +3,12 @@ using System.Data.Entity.Validation;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BiBilet.Data.EntityFramework.Repositories;
 using BiBilet.Data.EntityFramework.Repositories.Application;
 using BiBilet.Data.EntityFramework.Repositories.Identity;
 using BiBilet.Domain;
+using BiBilet.Domain.Entities.Application;
+using BiBilet.Domain.Repositories;
 using BiBilet.Domain.Repositories.Application;
 using BiBilet.Domain.Repositories.Identity;
 
@@ -50,8 +53,10 @@ namespace BiBilet.Data.EntityFramework
 
                     // Application
                     _eventRepository = null;
-                    _categoryRepository = null;
                     _organizerRepository = null;
+                    _categoryRepository = null;
+                    _topicRepository = null;
+                    _subTopicRepository = null;
 
                     // Database Context
                     _context.Dispose();
@@ -80,8 +85,10 @@ namespace BiBilet.Data.EntityFramework
 
         // Application
         private IEventRepository _eventRepository;
-        private ICategoryRepository _categoryRepository;
         private IOrganizerRepository _organizerRepository;
+        private IRepository<Category> _categoryRepository;
+        private IRepository<Topic> _topicRepository;
+        private ISubTopicRepository _subTopicRepository;
 
         #endregion
 
@@ -99,11 +106,17 @@ namespace BiBilet.Data.EntityFramework
         public IEventRepository EventRepository
             => _eventRepository ?? (_eventRepository = new EventRepository(_context));
 
-        public ICategoryRepository CategoryRepository
-            => _categoryRepository ?? (_categoryRepository = new CategoryRepository(_context));
-
         public IOrganizerRepository OrganizerRepository
             => _organizerRepository ?? (_organizerRepository = new OrganizerRepository(_context));
+
+        public IRepository<Category> CategoryRepository
+            => _categoryRepository ?? (_categoryRepository = new Repository<Category>(_context));
+
+        public IRepository<Topic> TopicRepository
+            => _topicRepository ?? (_topicRepository = new Repository<Topic>(_context));
+
+        public ISubTopicRepository SubTopicRepository
+            => _subTopicRepository ?? (_subTopicRepository = new SubTopicRepository(_context));
 
         /// <summary>
         /// Saves changes that are made in the current context

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using BiBilet.Domain.Entities.Application;
+using BiBilet.Domain.Repositories;
 using BiBilet.Domain.Repositories.Application;
 using BiBilet.Domain.Repositories.Identity;
 
@@ -19,9 +21,11 @@ namespace BiBilet.Domain
         IUserRepository UserRepository { get; }
 
         // Application
-        IEventRepository EventRepository { get; }
-        ICategoryRepository CategoryRepository { get; }
         IOrganizerRepository OrganizerRepository { get; }
+        IEventRepository EventRepository { get; }
+        IRepository<Category> CategoryRepository { get; }
+        IRepository<Topic> TopicRepository { get; }
+        ISubTopicRepository SubTopicRepository { get; }
 
         #endregion
 

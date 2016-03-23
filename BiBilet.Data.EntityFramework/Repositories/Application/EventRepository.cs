@@ -94,5 +94,40 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         {
             return Set.FirstOrDefaultAsync(e => e.Slug.Equals(slug) && e.Published, cancellationToken);
         }
+
+        /// <summary>
+        /// Returns single user event
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userId"></param>
+        /// <returns>An <see cref="Event" /></returns>
+        public virtual Event GetUserEvent(Guid id, Guid userId)
+        {
+            return Set.FirstOrDefault(e => e.EventId == id && e.Organizer.UserId == userId);
+        }
+
+        /// <summary>
+        /// Asynchronously returns single user event
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userId"></param>
+        /// <returns>An <see cref="Event" /></returns>
+        public virtual Task<Event> GetUserEventAsync(Guid id, Guid userId)
+        {
+            return Set.FirstOrDefaultAsync(e => e.EventId == id && e.Organizer.UserId == userId);
+        }
+
+        /// <summary>
+        /// Asynchronously returns single user event
+        /// with cancellation support
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>An <see cref="Event" /></returns>
+        public virtual Task<Event> GetUserEventAsync(Guid id, Guid userId, CancellationToken cancellationToken)
+        {
+            return Set.FirstOrDefaultAsync(e => e.EventId == id && e.Organizer.UserId == userId, cancellationToken);
+        }
     }
 }

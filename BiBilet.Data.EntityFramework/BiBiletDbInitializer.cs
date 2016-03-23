@@ -251,7 +251,8 @@ namespace BiBilet.Data.EntityFramework
                 new SubTopic {SubTopicId = Guid.NewGuid(), Name = "Tenis", Topic = topics[17]},
                 new SubTopic {SubTopicId = Guid.NewGuid(), Name = "Voleybol", Topic = topics[17]},
                 new SubTopic {SubTopicId = Guid.NewGuid(), Name = "Yoga", Topic = topics[17]},
-                new SubTopic {SubTopicId = Guid.NewGuid(), Name = "Diğer", Topic = topics[17]}
+                new SubTopic {SubTopicId = Guid.NewGuid(), Name = "Diğer", Topic = topics[17]},
+                new SubTopic {SubTopicId = Guid.NewGuid(), Name = "Diğer", Topic = topics[18]}
             };
 
             subtopics.ForEach(s => context.SubTopics.AddOrUpdate(p => p.SubTopicId, s));
@@ -263,7 +264,7 @@ namespace BiBilet.Data.EntityFramework
                 {
                     VenueId = Guid.NewGuid(),
                     Name = "Orta Doğu Teknik Üniversitesi Kampüsü",
-                    Address = "Üniversiteler Mahallesi, Dumlupınar Bulvarı No:1 06800 Çankaya",
+                    Address = "Üniversiteler Mahallesi, Dumlupınar Bulvarı No: 1 06800, Çankaya",
                     City = "Ankara",
                     Country = "Türkiye"
                 }
