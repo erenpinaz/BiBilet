@@ -9,30 +9,41 @@ if (!window.jQuery) {
 }
 
 $(function () {
-
-    // Initialize moment.js
+    // Initialize moment
     moment.locale("tr");
 
-    // Update selected item of a select menu when browser back button pressed
-    // Credits: http://stackoverflow.com/questions/4370819/select-menu-not-being-restored-when-back-button-used/28302447#28302447
-    $("select").each(function () {
-        var select = $(this);
-        var selectedValue = select.find("option[selected]").val();
-
-        if (selectedValue) {
-            select.val(selectedValue);
-        } else {
-            select.prop("selectedIndex", 0);
-        }
-    });
-
-    // Bootstrap table resize fix
+    // Fix bootstrap table resize
     var $table = $("table[data-toggle='table']");
     if ($table.length > 0) {
         $(window).resize(function () {
             $('table[data-toggle="table"]').bootstrapTable("resetView");
         });
     }
+
+    // Localize (tr) jQuery validation for decimal and date
+    jQuery.extend(jQuery.validator.methods, {
+        number: function (value, element) {
+            return this.optional(element)
+             || /^-?(?:\d+|\d{1,3}(?:[\s\,]\d{3})+)(?:[\,]\d+)?$/.test(value);
+        },
+        date: function (value, element) {
+            return this.optional(element)
+                || moment(new Date(value)).format();
+        }
+    });
+
+    // Update select lists when browser back button pressed
+    // Credits: http://stackoverflow.com/questions/4370819/select-menu-not-being-restored-when-back-button-used/28302447#28302447
+    $("select").each(function () {
+        var $select = $(this);
+        var selectedValue = $select.find("option[selected]").val();
+
+        if (selectedValue) {
+            $select.val(selectedValue);
+        } else {
+            $select.prop("selectedIndex", 0);
+        }
+    });
 
     // Organizer description tinymce
     var $organizerDescription = $("#organizerForm").find("[data-tinymce='organizer']");
@@ -123,15 +134,115 @@ $(function () {
 
         uploader.init();
     }
+
+    // Event linked datetime pickers
+    var $eventStartDate = $("#eventForm").find("#StartDate");
+    var $eventEndDate = $("#eventForm").find("#EndDate");
+    if ($eventStartDate.length > 0 && $eventEndDate.length > 0) {
+        $eventStartDate.datetimepicker({
+            locale: "tr"
+        });
+        $($eventEndDate).datetimepicker({
+            locale: "tr",
+            useCurrent: false
+        });
+        $($eventStartDate).on("dp.change", function (e) {
+            $($eventEndDate).data("DateTimePicker").minDate(e.date);
+        });
+        $($eventEndDate).on("dp.change", function (e) {
+            $($eventStartDate).data("DateTimePicker").maxDate(e.date);
+        });
+    }
+
+    // Event description tinymce
+    var $eventDescription = $("#eventForm").find("[data-tinymce='event']");
+    if ($eventDescription.length > 0) {
+        tinymce.init({
+            selector: "textarea[data-tinymce='event']",
+            language: "tr_TR",
+            autosave_interval: "10s",
+            relative_urls: false,
+            entity_encoding: "raw",
+            min_height: 300,
+            plugins: [
+                "advlist autolink lists link image charmap print preview anchor",
+                "searchreplace visualblocks fullscreen autosave",
+                "insertdatetime media table contextmenu paste"
+            ],
+            toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+        });
+    }
+
+    // Event ticket container configuration
+    var $form = $("#eventForm").find("form");
+    var $ticketContainer = $form.find("#ticket-container");
+    if ($ticketContainer.length > 0) {
+
+        // Parses the delete ticket buttons
+        var parseDeleteTicketButtons = function (selector) {
+            $(selector).on("click", function (e) {
+                e.preventDefault();
+
+                var ticketId = $(selector).data("id");
+                if (ticketId) {
+                    if (confirm("Bu bileti silmek istiyor musunuz?")) {
+                        $.post("/ticket/deleteticket?id=" + ticketId, function () { })
+                            .done(function (data) {
+                                if (data.result === "success") {
+                                    $(this).parents(".ticket-item:first").remove();
+                                    parseForValidations($form);
+                                } else {
+                                    alert("Bilet silinirken bir hata oluştu.");
+                                }
+                            })
+                            .fail(function (jqXhr, textStatus, error) {
+                                alert(error);
+                            });
+                    }
+                }
+            });
+        }
+        parseDeleteTicketButtons($(".delete-ticket"));
+
+        var $createTicketButtons = $ticketContainer.find(".create-ticket");
+        $createTicketButtons.on("click", function (e) {
+            e.preventDefault();
+
+            $.get("/event/addticketitem?type=" + $(this).data("type"), function () { })
+                .done(function (data) {
+                    $ticketContainer.find(".panel-body").append(data);
+                    parseDeleteTicketButtons($(".delete-ticket:last"));
+                    parseForValidations($form);
+                })
+                .fail(function (jqXhr, textStatus, error) {
+                    alert(error);
+                });
+        });
+    }
+
+    // Event populate sub topics
+    var $topicList = $("#eventForm").find("#TopicId");
+    var $subTopicList = $("#eventForm").find("#SubTopicId");
+    if ($topicList.length > 0 && $subTopicList.length > 0) {
+        $topicList.on("change", function () {
+            var topicId = $(this).val();
+            if (topicId) {
+                $subTopicList.empty();
+
+                $.getJSON("/event/populatesubtopics?topicId=" + topicId, function (data) {
+                    $.each(data, function (i, subTopic) {
+                        $subTopicList.append("<option value='" + subTopic.subtopicid + "'>" + subTopic.name + "</option>");
+                    });
+                });
+            }
+        });
+    }
+
 });
 
 /* ========================
     Event Bootstrap Table
    ======================== */
-
-// ===================
-// => Table Formatters
-// ===================
 
 // Event Title Formatter
 function eventTitleFormatter(value, row) {
@@ -164,6 +275,14 @@ function jsonDateFormatter(value) {
 /* ====================
     Utils
    ==================== */
+
+// Parse form for validations
+function parseForValidations(selector) {
+    $(selector)
+        .removeData("validator")
+        .removeData("unobtrusiveValidation");
+    $.validator.unobtrusive.parse(selector);
+}
 
 // String.format
 // http://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format

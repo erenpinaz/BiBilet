@@ -54,6 +54,7 @@ namespace BiBilet.Data.EntityFramework
                     // Application
                     _eventRepository = null;
                     _organizerRepository = null;
+                    _ticketRepository = null;
                     _categoryRepository = null;
                     _topicRepository = null;
                     _subTopicRepository = null;
@@ -86,6 +87,7 @@ namespace BiBilet.Data.EntityFramework
         // Application
         private IEventRepository _eventRepository;
         private IOrganizerRepository _organizerRepository;
+        private IRepository<Ticket> _ticketRepository;
         private IRepository<Category> _categoryRepository;
         private IRepository<Topic> _topicRepository;
         private ISubTopicRepository _subTopicRepository;
@@ -108,6 +110,9 @@ namespace BiBilet.Data.EntityFramework
 
         public IOrganizerRepository OrganizerRepository
             => _organizerRepository ?? (_organizerRepository = new OrganizerRepository(_context));
+
+        public IRepository<Ticket> TicketRepository
+            => _ticketRepository ?? (_ticketRepository = new Repository<Ticket>(_context));
 
         public IRepository<Category> CategoryRepository
             => _categoryRepository ?? (_categoryRepository = new Repository<Category>(_context));

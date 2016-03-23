@@ -174,6 +174,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\css\bootstrap-datetimepicker.css" />
     <Content Include="Assets\css\site.css" />
     <Content Include="Assets\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Assets\images\ajax-loader.gif" />
@@ -182,6 +183,7 @@
     <Content Include="Assets\images\event-placeholder.png" />
     <Content Include="Assets\images\footer-bg.png" />
     <Content Include="Assets\images\placeholder.png" />
+    <Content Include="Assets\js\bootstrap-datetimepicker.js" />
     <Content Include="Assets\js\bootstrap-table\bootstrap-table-locale-all.js" />
     <Content Include="Assets\js\bootstrap-table\bootstrap-table-locale-all.min.js" />
     <Content Include="Assets\css\bootstrap-table.css" />
@@ -320,6 +322,7 @@
     <Content Include="Assets\js\bootstrap.js" />
     <Content Include="Assets\js\jquery-1.12.1.js" />
     <Content Include="Assets\js\jquery.validate.js" />
+    <Content Include="Assets\js\moment.js" />
     <Content Include="Assets\js\plupload\i18n\ar.js" />
     <Content Include="Assets\js\plupload\i18n\az.js" />
     <Content Include="Assets\js\plupload\i18n\be_BY.js" />
@@ -472,7 +475,9 @@
     <Content Include="Assets\js\tinymce\tinymce.min.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="robots.txt" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\Shared\_Layout.cshtml" />
@@ -574,6 +579,8 @@
     <Content Include="Views\Account\Organizer.cshtml" />
     <Content Include="Views\Account\DeleteOrganizer.cshtml" />
     <Content Include="Views\Event\MyEvents.cshtml" />
+    <Content Include="Views\Event\UpdateEvent.cshtml" />
+    <Content Include="Views\Event\_TicketItem.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -582,7 +589,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -598,6 +607,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\HtmlHelpers.cs" />
+    <Compile Include="Helpers\HtmlPrefixScopeExtensions.cs" />
     <Compile Include="Identity\IdentityRole.cs" />
     <Compile Include="Identity\IdentityUser.cs" />
     <Compile Include="Identity\RoleStore.cs" />
@@ -605,6 +616,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utils\DiskUtils.cs" />
+    <Compile Include="Utils\OptimizationUtils.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="ViewModels\EventViewModels.cs" />
     <Compile Include="ViewModels\HomeViewModels.cs" />

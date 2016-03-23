@@ -3,14 +3,19 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.UI;
 using BiBilet.Domain;
 using BiBilet.Web.ViewModels;
 using Microsoft.AspNet.Identity;
+using BiBilet.Domain.Entities.Application;
 
 namespace BiBilet.Web.Controllers
 {
     public class EventController : BaseController
     {
+        private const string UploadPath = "/assets/uploads/events/";
+        private const string PlaceholderImagePath = "/assets/images/placeholder.png";
+
         public EventController(IUnitOfWork unitOfWork)
             : base(unitOfWork)
         {
@@ -37,27 +42,191 @@ namespace BiBilet.Web.Controllers
                 Title = eventObj.Title,
                 Description = eventObj.Description,
                 Image = eventObj.Image,
-                Slug = eventObj.Slug,
-                StartDate = eventObj.StartDate,
-                EndDate = eventObj.EndDate,
+                Date = eventObj.StartDate.Date != eventObj.EndDate.Date
+                    ? string.Format("{0} - {1}", eventObj.StartDate.ToLongDateString(),
+                        eventObj.EndDate.ToLongDateString())
+                    : eventObj.StartDate.ToLongDateString(),
+                Time =
+                    string.Format("{0} - {1}", eventObj.StartDate.ToShortTimeString(),
+                        eventObj.EndDate.ToShortTimeString()),
                 OrganizerName = eventObj.Organizer.Name,
-                OrganizerSlug = eventObj.Organizer.Slug,
                 VenueName = eventObj.Venue.Name,
                 VenueAddress =
-                    string.Format("{0}, {1}/{2}", eventObj.Venue.Address, eventObj.Venue.City, eventObj.Venue.Country),
-                CategoryName = eventObj.Category.Name,
-                CategorySlug = eventObj.Category.Slug,
+                    string.Format("{0} {1}, {2}", eventObj.Venue.Address, eventObj.Venue.City, eventObj.Venue.Country),
                 TopicName = eventObj.Topic.Name,
-                TopicId = eventObj.Topic.TopicId,
                 SubTopicName = eventObj.SubTopic.Name,
-                SubTopicId = eventObj.SubTopic.SubTopicId,
+                IsLive = eventObj.StartDate >= DateTime.UtcNow,
                 Tickets = eventObj.Tickets.Select(t => new TicketViewModel()
                 {
                     TicketId = t.TicketId,
                     Title = t.Title,
                     Quantity = t.Quantity,
-                    Price = t.Price
+                    Price = t.Price,
+                    Type = t.Type
                 }).ToList()
+            });
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> UpdateEvent(Guid id, string message)
+        {
+            var eventObj = await UnitOfWork.EventRepository.GetUserEventAsync(id, GetGuid(User.Identity.GetUserId()));
+            if (eventObj == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            }
+
+            ViewBag.StatusMessage = message;
+
+            return View(new EventEditModel()
+            {
+                Organizers =
+                    new SelectList(await UnitOfWork.OrganizerRepository.GetAllAsync(), "OrganizerId", "Name",
+                        eventObj.OrganizerId),
+                Categories =
+                    new SelectList(await UnitOfWork.CategoryRepository.GetAllAsync(), "CategoryId", "Name",
+                        eventObj.CategoryId),
+                Topics =
+                    new SelectList(await UnitOfWork.TopicRepository.GetAllAsync(), "TopicId", "Name", eventObj.TopicId),
+                SubTopics =
+                    new SelectList(await UnitOfWork.SubTopicRepository.GetSubTopicsAsync(eventObj.TopicId), "SubTopicId",
+                        "Name", eventObj.SubTopicId),
+                EventId = eventObj.EventId,
+                OrganizerId = eventObj.Organizer.OrganizerId,
+                VenueId = eventObj.Venue.VenueId,
+                CategoryId = eventObj.Category.CategoryId,
+                TopicId = eventObj.Topic.TopicId,
+                SubTopicId = eventObj.SubTopic.SubTopicId,
+                Title = eventObj.Title,
+                Description = eventObj.Description,
+                Image = eventObj.Image,
+                Slug = eventObj.Slug,
+                Published = eventObj.Published,
+                StartDate = eventObj.StartDate,
+                EndDate = eventObj.EndDate,
+                VenueName = eventObj.Venue.Name,
+                VenueAddress = eventObj.Venue.Address,
+                VenueCity = eventObj.Venue.City,
+                VenueCountry = eventObj.Venue.Country,
+                Tickets = eventObj.Tickets.Select(t => new TicketViewModel()
+                {
+                    TicketId = t.TicketId,
+                    Title = t.Title,
+                    Quantity = t.Quantity,
+                    Price = t.Price,
+                    Type = t.Type
+                }).ToList()
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> UpdateEvent(Guid id, EventEditModel model)
+        {
+            // Get the user event from the database
+            var eventObj = await UnitOfWork.EventRepository.GetUserEventAsync(id, GetGuid(User.Identity.GetUserId()));
+            if (eventObj == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (model.Tickets.Any())
+                    {
+                        if (await IsEventSlugUnique(model.Slug, eventObj.EventId))
+                        {
+                            eventObj.CategoryId = model.CategoryId;
+                            eventObj.OrganizerId = model.OrganizerId;
+                            eventObj.TopicId = model.TopicId;
+                            eventObj.SubTopicId = model.SubTopicId;
+
+                            eventObj.Title = model.Title;
+                            eventObj.Description = model.Description;
+                            eventObj.Image = model.Image ?? PlaceholderImagePath;
+                            eventObj.Slug = model.Slug;
+                            eventObj.Published = model.Published;
+                            eventObj.StartDate = model.StartDate;
+                            eventObj.EndDate = model.EndDate;
+
+                            foreach (var ticketVm in model.Tickets)
+                            {
+                                if (ticketVm.TicketId == Guid.Empty)
+                                {
+                                    UnitOfWork.TicketRepository.Add(new Ticket()
+                                    {
+                                        TicketId = Guid.NewGuid(),
+                                        EventId = eventObj.EventId,
+                                        Title = ticketVm.Title,
+                                        Quantity = ticketVm.Quantity,
+                                        Price = ticketVm.Price,
+                                        Type = ticketVm.Type
+                                    });
+                                }
+                                else
+                                {
+                                    var ticket =
+                                        eventObj.Tickets.FirstOrDefault(t => t.TicketId == ticketVm.TicketId);
+                                    if (ticket != null)
+                                    {
+                                        ticket.EventId = eventObj.EventId;
+                                        ticket.Title = ticketVm.Title;
+                                        ticket.Quantity = ticketVm.Quantity;
+                                        ticket.Price = ticketVm.Price;
+
+                                        UnitOfWork.TicketRepository.Update(ticket);
+                                    }
+                                }
+                            }
+
+                            // If the event slug is unique, update the event record
+                            UnitOfWork.EventRepository.Update(eventObj);
+                            await UnitOfWork.SaveChangesAsync();
+
+                            return RedirectToAction("UpdateEvent", "Event",
+                                new {id = eventObj.EventId, message = "Etkinlik başarıyla güncellendi"});
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("slug", "Url kısaltması özel olmalıdır");
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Etkinliğe en az bir bilet eklenmelidir");
+                    }
+                }
+                catch
+                {
+                    //TODO: Log error
+                    ModelState.AddModelError("", "Etkinlik güncellenirken bir hata oluştu");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Lütfen tüm alanları doğru şekilde doldurunuz");
+            }
+
+            model.Organizers = new SelectList(await UnitOfWork.OrganizerRepository.GetAllAsync(), "OrganizerId", "Name",
+                eventObj.OrganizerId);
+            model.Categories = new SelectList(await UnitOfWork.CategoryRepository.GetAllAsync(), "CategoryId", "Name",
+                eventObj.CategoryId);
+            model.Topics = new SelectList(await UnitOfWork.TopicRepository.GetAllAsync(), "TopicId", "Name",
+                eventObj.TopicId);
+            model.SubTopics = new SelectList(await UnitOfWork.SubTopicRepository.GetSubTopicsAsync(eventObj.TopicId),
+                "SubTopicId", "Name", eventObj.SubTopicId);
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult AddTicketItem(string type)
+        {
+            return PartialView("_TicketItem", new TicketViewModel()
+            {
+                Type = type == "free" ? TicketType.Free : TicketType.Paid
             });
         }
 
@@ -85,6 +254,25 @@ namespace BiBilet.Web.Controllers
             return Json(json, JsonRequestBehavior.AllowGet);
         }
 
+        [OutputCache(Duration = 3600, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "topicId")]
+        [HttpGet]
+        public async Task<ActionResult> PopulateSubTopics(Guid topicId)
+        {
+            if (!Request.IsAjaxRequest())
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var subTopics = await UnitOfWork.SubTopicRepository.GetSubTopicsAsync(topicId);
+            var json = subTopics.Select(s => new
+            {
+                subtopicid = s.SubTopicId,
+                name = s.Name
+            });
+
+            return Json(json, JsonRequestBehavior.AllowGet);
+        }
+
         #region Helpers
 
         /// <summary>
@@ -97,6 +285,23 @@ namespace BiBilet.Web.Controllers
             Guid result;
             Guid.TryParse(value, out result);
             return result;
+        }
+
+        /// <summary>
+        /// Checks if event slug is unique
+        /// </summary>
+        /// <param name="slug"></param>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
+        private async Task<bool> IsEventSlugUnique(string slug, Guid eventId)
+        {
+            var events = await UnitOfWork.EventRepository.GetAllAsync();
+            var eventObj = events.FirstOrDefault(e => e.EventId == eventId);
+            if (eventObj != null && eventObj.Slug == slug)
+            {
+                return events.Count(e => e.Slug == slug) <= 1;
+            }
+            return events.Count(e => e.Slug == slug) == 0;
         }
 
         #endregion

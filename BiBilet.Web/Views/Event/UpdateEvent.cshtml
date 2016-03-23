@@ -1,0 +1,187 @@
+﻿@model BiBilet.Web.ViewModels.EventEditModel
+
+@{
+    ViewBag.Title = "Düzenleniyor: " + Model.Title;
+}
+
+<div class="row">
+    <div class="col-md-offset-2 col-md-8">
+        <section id="eventForm">
+            @using (Html.BeginForm("UpdateEvent", "Event", new {id = Model.EventId}, FormMethod.Post, new {@class = "form-horizontal", role = "form"}))
+            {
+                @Html.AntiForgeryToken()
+
+                <h1 class="page-header">@ViewBag.Title</h1>
+
+                @Html.ValidationSummary(true)
+                @Html.HiddenFor(m => m.EventId)
+                @Html.HiddenFor(m => m.VenueId)
+
+                <h4 class="page-header">Genel bilgiler</h4>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Title, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.EditorFor(m => m.Title, new {htmlAttributes = new {@class = "form-control", placeholder = Html.DisplayPlaceholderFor(m => m.Title)}})
+                        @Html.ValidationMessageFor(m => m.Title)
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.OrganizerId, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(m => m.OrganizerId, Model.Organizers, new {@class = "form-control"})
+                        @Html.ValidationMessageFor(m => m.OrganizerId)
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.StartDate, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-4">
+                        @Html.EditorFor(m => m.StartDate, new {htmlAttributes = new {@class = "form-control", placeholder = Html.DisplayPlaceholderFor(m => m.StartDate)}})
+                        @Html.ValidationMessageFor(m => m.StartDate)
+                    </div>
+
+                    @Html.LabelFor(m => m.EndDate, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-4">
+                        @Html.EditorFor(m => m.EndDate, new {htmlAttributes = new {@class = "form-control", placeholder = Html.DisplayPlaceholderFor(m => m.EndDate)}})
+                        @Html.ValidationMessageFor(m => m.EndDate)
+                    </div>
+                </div>
+
+                <h4 class="page-header">Etkinlik Mekânı</h4>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.VenueName, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.EditorFor(m => m.VenueName, new {htmlAttributes = new {@class = "form-control", placeholder = Html.DisplayPlaceholderFor(m => m.VenueName)}})
+                        @Html.ValidationMessageFor(m => m.VenueName)
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.VenueAddress, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.EditorFor(m => m.VenueAddress, new {htmlAttributes = new {@class = "form-control", placeholder = Html.DisplayPlaceholderFor(m => m.VenueAddress)}})
+                        @Html.ValidationMessageFor(m => m.VenueName)
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.VenueCity, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-4">
+                        @Html.EditorFor(m => m.VenueCity, new {htmlAttributes = new {@class = "form-control", placeholder = Html.DisplayPlaceholderFor(m => m.VenueCity)}})
+                        @Html.ValidationMessageFor(m => m.VenueCity)
+                    </div>
+
+                    @Html.LabelFor(m => m.VenueCountry, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-4">
+                        @Html.EditorFor(m => m.VenueCountry, new {htmlAttributes = new {@class = "form-control", placeholder = Html.DisplayPlaceholderFor(m => m.VenueCountry)}})
+                        @Html.ValidationMessageFor(m => m.VenueCountry)
+                    </div>
+                </div>
+
+                <h4 class="page-header">Detaylar</h4>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Description, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.EditorFor(m => m.Description, new {htmlAttributes = new {data_tinymce = "event", @class = "form-control", placeholder = Html.DisplayPlaceholderFor(m => m.Description)}})
+                        @Html.ValidationMessageFor(m => m.Description)
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Image, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        <div id="event-image-uploader" data-url="@Url.Action("UploadEventImage", "Event", new {id = Model.EventId})">
+                            <button id="picker" type="button" class="btn btn-sm btn-default">
+                                <span class="glyphicon glyphicon-camera"></span>
+                            </button>
+                            <div class="preview-wrapper">
+                                <img id="preview" src="@Model.Image" alt="Organizatör Resmi"/>
+                            </div>
+                            <div id="progress" class="progress">
+                                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0;">0</div>
+                            </div>
+                            @Html.HiddenFor(m => m.Image)
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="page-header">Biletler</h4>
+
+                <div class="panel panel-default" id="ticket-container">
+                    <div class="panel-body">
+                        @foreach (var ticketItem in Model.Tickets.AsEnumerable())
+                        {
+                            Html.RenderPartial("_TicketItem", ticketItem);
+                        }
+                    </div>
+                    <div class="panel-footer">
+                        <div class="btn-group">
+                            <a href="#" class="btn btn-primary btn-sm create-ticket" data-type="free">
+                                <span class="glyphicon glyphicon-plus"></span> Bedava Bilet
+                            </a>
+                            <a href="#" class="btn btn-primary btn-sm create-ticket" data-type="paid">
+                                <span class="glyphicon glyphicon-plus"></span> Ücretli Bilet
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="page-header">Ayarlar</h4>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Slug, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.EditorFor(m => m.Slug, new {htmlAttributes = new {@class = "form-control", placeholder = Html.DisplayPlaceholderFor(m => m.Slug)}})
+                        @Html.ValidationMessageFor(m => m.Slug)
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CategoryId, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(m => m.CategoryId, Model.Categories, new {@class = "form-control"})
+                        @Html.ValidationMessageFor(m => m.CategoryId)
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.TopicId, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(m => m.TopicId, Model.Topics, new {@class = "form-control"})
+                        @Html.ValidationMessageFor(m => m.TopicId)
+                    </div>
+
+                    @Html.LabelFor(m => m.SubTopicId, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(m => m.SubTopicId, Model.SubTopics, new {@class = "form-control"})
+                        @Html.ValidationMessageFor(m => m.SubTopicId)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="alert alert-danger">
+                            <p>
+                                Etkinliğin aktif olabilmesi için <b>Yayınla</b> seçilmelidir.
+                            </p>
+                            <div class="checkbox">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.Published) @Html.DisplayNameFor(m => m.Published)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr/>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                        &nbsp; <span class="text-info">@ViewBag.StatusMessage</span>
+                    </div>
+                </div>
+            }
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/assets/js/tinymce/tinymce.min.js")
+}

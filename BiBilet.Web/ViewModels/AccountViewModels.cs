@@ -4,7 +4,7 @@ using System.Web.Mvc;
 
 namespace BiBilet.Web.ViewModels
 {
-    public class OrganizerViewModel
+    public class OrganizerEditModel
     {
         public Guid OrganizerId { get; set; }
 
@@ -15,7 +15,6 @@ namespace BiBilet.Web.ViewModels
         public string Name { get; set; }
 
         [Required]
-        [StringLength(2048, MinimumLength = 3)]
         [DataType(DataType.MultilineText)]
         [AllowHtml]
         [Display(Name = "Açıklama")]
@@ -41,7 +40,7 @@ namespace BiBilet.Web.ViewModels
         public bool IsRemovable { get; set; }
     }
 
-    public class SettingsViewModel
+    public class SettingsEditModel
     {
         [DataType(DataType.Text)]
         [Display(Name = "Kullanıcı adı")]
@@ -65,19 +64,18 @@ namespace BiBilet.Web.ViewModels
         [Display(Name = "Şimdiki şifre")]
         public string OldPassword { get; set; }
 
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [StringLength(100, MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Yeni şifre")]
         public string NewPassword { get; set; }
 
         [DataType(DataType.Password)]
         [Display(Name = "Yeni şifre onayı")]
-        [System.ComponentModel.DataAnnotations.Compare("NewPassword",
-            ErrorMessage = "The new password and confirmation password do not match.")]
+        [System.ComponentModel.DataAnnotations.Compare("NewPassword")]
         public string ConfirmPassword { get; set; }
     }
 
-    public class LoginViewModel
+    public class LoginEditModel
     {
         [Required]
         [Display(Name = "Kullanıcı adı")]
@@ -92,7 +90,7 @@ namespace BiBilet.Web.ViewModels
         public bool RememberMe { get; set; }
     }
 
-    public class RegisterViewModel
+    public class RegisterEditModel
     {
         [Required]
         [DataType(DataType.Text)]
@@ -113,15 +111,14 @@ namespace BiBilet.Web.ViewModels
         public string Email { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [StringLength(100, MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Şifre")]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
         [Display(Name = "Şifre onayı")]
-        [System.ComponentModel.DataAnnotations.Compare("Password",
-            ErrorMessage = "The password and confirmation password do not match.")]
+        [System.ComponentModel.DataAnnotations.Compare("Password")]
         public string ConfirmPassword { get; set; }
     }
 }

@@ -21,8 +21,9 @@ namespace BiBilet.Domain
         IUserRepository UserRepository { get; }
 
         // Application
-        IOrganizerRepository OrganizerRepository { get; }
         IEventRepository EventRepository { get; }
+        IOrganizerRepository OrganizerRepository { get; }
+        IRepository<Ticket> TicketRepository { get; }
         IRepository<Category> CategoryRepository { get; }
         IRepository<Topic> TopicRepository { get; }
         ISubTopicRepository SubTopicRepository { get; }

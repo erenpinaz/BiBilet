@@ -19,24 +19,22 @@
                 <a href="#">@Model.TopicName</a> / <a href="#">@Model.SubTopicName</a>
             </p>
             <p>
-                <i class="glyphicon glyphicon-calendar"></i>@Model.StartDate.ToString("%d MMMM yyyy, dddd")
-                @if (Model.StartDate.ToString("%d MMMM yyyy, dddd") != Model.EndDate.ToString("%d MMMM yyyy, dddd"))
-                {
-                    <span>- @Model.EndDate.ToString("%d MMMM yyyy, dddd")</span>
-                }
+                <i class="glyphicon glyphicon-calendar"></i>@Model.Date
             </p>
             <p>
-                <i class="glyphicon glyphicon-time"></i>@Model.StartDate.ToString("%H:mm") - @Model.EndDate.ToString("%H:mm")
+                <i class="glyphicon glyphicon-time"></i>@Model.Time
             </p>
             <p>
-                <i class="glyphicon glyphicon-home"></i>@Model.VenueName</p>
+                <i class="glyphicon glyphicon-home"></i>@Model.VenueName
+            </p>
             <p>
                 <i class="glyphicon glyphicon-arrow-right"></i>@Model.VenueAddress
             </p>
             <p>
-                <i class="glyphicon glyphicon-user"></i>@Model.OrganizerName</p>
+                <i class="glyphicon glyphicon-user"></i>@Model.OrganizerName
+            </p>
             <p>
-                @if (Model.StartDate >= DateTime.Now)
+                @if (Model.IsLive)
                 {
                     <table class="table table-hover">
                         <thead>
@@ -55,7 +53,7 @@
                                 <td>
                                     @((ticket.Quantity <= 0) ? "Tükenmiş" : ticket.Quantity.ToString())
                                 </td>
-                                @if (@ticket.Price > 0 && @ticket.Quantity > 0)
+                                @if (ticket.Price > 0 && ticket.Quantity > 0)
                                 {
                                     <td>@ticket.Price</td>
                                     <td>
@@ -100,6 +98,6 @@
 
 <div class="row">
     <div class="col-md-12">
-        <p>@Model.Description</p>
+        @Html.Raw(Model.Description)
     </div>
 </div>
