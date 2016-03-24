@@ -6734,6 +6734,12 @@ button.close {
 /* =============================
     Styles
    ============================= */
+.field-validation-error {
+  color: #d9534f;
+}
+.input-validation-error {
+  border: 1px solid #d9534f;
+}
 .navbar {
   margin-bottom: 0;
 }
