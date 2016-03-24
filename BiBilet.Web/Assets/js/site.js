@@ -75,10 +75,10 @@ $(function () {
     // Organizer profile image uploader
     var $organizerImageUploader = $("#organizer-image-uploader");
     if ($organizerImageUploader.length > 0) {
-        var $preview = $organizerImageUploader.find("#preview").get(0);
-        var $image = $organizerImageUploader.find("#Image").get(0);
+        var $organizerPreview = $organizerImageUploader.find("#preview").get(0);
+        var $organizerImage = $organizerImageUploader.find("#Image").get(0);
 
-        var uploader = new plupload.Uploader({
+        var ouploader = new plupload.Uploader({
             runtimes: "html5,flash",
             browse_button: "picker",
             container: "organizer-image-uploader",
@@ -100,20 +100,20 @@ $(function () {
             silverlight_xap_url: "/assets/js/plupload/Moxie.xap"
         });
 
-        uploader.bind("Init", function (up, params) {
+        ouploader.bind("Init", function (up, params) {
             $("#runtime").html("Current runtime: " + params.runtime);
         });
 
-        uploader.bind("Browse", function () {
-            uploader.splice();
-            uploader.refresh();
+        ouploader.bind("Browse", function () {
+            ouploader.splice();
+            ouploader.refresh();
         });
 
-        uploader.bind("FilesAdded", function (up, file) {
+        ouploader.bind("FilesAdded", function (up, file) {
             up.start();
         });
 
-        uploader.bind("UploadProgress", function (up, file) {
+        ouploader.bind("UploadProgress", function (up, file) {
             var $progress = $organizerImageUploader.find("#progress").find(".progress-bar").get(0);
             if ($progress) {
                 $($progress)
@@ -123,16 +123,16 @@ $(function () {
             }
         });
 
-        uploader.bind("FileUploaded", function (up, file, data) {
+        ouploader.bind("FileUploaded", function (up, file, data) {
             var response = jQuery.parseJSON(data.response);
 
-            if (response.path && $preview && $image) {
-                $($preview).attr("src", response.path);
-                $($image).attr("value", response.path);
+            if (response.path && $organizerPreview && $organizerImage) {
+                $($organizerPreview).attr("src", response.path);
+                $($organizerImage).attr("value", response.path);
             }
         });
 
-        uploader.init();
+        ouploader.init();
     }
 
     // Event linked datetime pickers
@@ -171,6 +171,69 @@ $(function () {
             ],
             toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
         });
+    }
+
+    // Event image uploader
+    var $eventImageUploader = $("#event-image-uploader");
+    if ($eventImageUploader.length > 0) {
+        var $eventPreview = $eventImageUploader.find("#preview").get(0);
+        var $eventImage = $eventImageUploader.find("#Image").get(0);
+
+        var euploader = new plupload.Uploader({
+            runtimes: "html5,flash",
+            browse_button: "picker",
+            container: "event-image-uploader",
+            url: $eventImageUploader.data("url"),
+            max_file_size: "5mb",
+            dragdrop: false,
+            multiple_queues: false,
+            multi_selection: false,
+            max_file_count: 1,
+            resize: {
+                width: 240,
+                height: 360,
+                crop: true
+            },
+            filters: [
+                { title: "Image files", extensions: "jpg,jpeg,gif,png" }
+            ],
+            flash_swf_url: "/assets/js/plupload/Moxie.swf",
+            silverlight_xap_url: "/assets/js/plupload/Moxie.xap"
+        });
+
+        euploader.bind("Init", function (up, params) {
+            $("#runtime").html("Current runtime: " + params.runtime);
+        });
+
+        euploader.bind("Browse", function () {
+            euploader.splice();
+            euploader.refresh();
+        });
+
+        euploader.bind("FilesAdded", function (up, file) {
+            up.start();
+        });
+
+        euploader.bind("UploadProgress", function (up, file) {
+            var $progress = $organizerImageUploader.find("#progress").find(".progress-bar").get(0);
+            if ($progress) {
+                $($progress)
+                    .text(file.percent)
+                    .css("width", file.percent + "%")
+                    .attr("aria-valuenow", file.percent);
+            }
+        });
+
+        euploader.bind("FileUploaded", function (up, file, data) {
+            var response = jQuery.parseJSON(data.response);
+
+            if (response.path && $eventPreview && $eventImage) {
+                $($eventPreview).attr("src", response.path);
+                $($eventImage).attr("value", response.path);
+            }
+        });
+
+        euploader.init();
     }
 
     // Event ticket container configuration

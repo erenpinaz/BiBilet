@@ -1,16 +1,20 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.UI;
 using BiBilet.Domain;
 using BiBilet.Web.ViewModels;
 using Microsoft.AspNet.Identity;
 using BiBilet.Domain.Entities.Application;
+using BiBilet.Web.Utils;
 
 namespace BiBilet.Web.Controllers
 {
+    [Authorize]
     public class EventController : BaseController
     {
         private const string UploadPath = "/assets/uploads/events/";
@@ -21,13 +25,13 @@ namespace BiBilet.Web.Controllers
         {
         }
 
-        [Authorize]
         [HttpGet]
         public ActionResult MyEvents()
         {
             return View();
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult> Details(string slug)
         {
@@ -123,7 +127,6 @@ namespace BiBilet.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> UpdateEvent(Guid id, EventEditModel model)
         {
-            // Get the user event from the database
             var eventObj = await UnitOfWork.EventRepository.GetUserEventAsync(id, GetGuid(User.Identity.GetUserId()));
             if (eventObj == null)
             {
@@ -138,8 +141,8 @@ namespace BiBilet.Web.Controllers
                     {
                         if (await IsEventSlugUnique(model.Slug, eventObj.EventId))
                         {
-                            eventObj.CategoryId = model.CategoryId;
                             eventObj.OrganizerId = model.OrganizerId;
+                            eventObj.CategoryId = model.CategoryId;
                             eventObj.TopicId = model.TopicId;
                             eventObj.SubTopicId = model.SubTopicId;
 
@@ -182,7 +185,6 @@ namespace BiBilet.Web.Controllers
                                 }
                             }
 
-                            // If the event slug is unique, update the event record
                             UnitOfWork.EventRepository.Update(eventObj);
                             await UnitOfWork.SaveChangesAsync();
 
@@ -220,6 +222,49 @@ namespace BiBilet.Web.Controllers
                 "SubTopicId", "Name", eventObj.SubTopicId);
 
             return View(model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UploadEventImage(Guid id)
+        {
+            var eventObj = await UnitOfWork.EventRepository.GetUserEventAsync(id, GetGuid(User.Identity.GetUserId()));
+            if (eventObj == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            }
+
+            try
+            {
+                var file = Request.Files[0];
+                if (file != null)
+                {
+                    const string fileName = "event-image.jpg";
+
+                    var absolutePath = Server.MapPath(Path.Combine(UploadPath, id.ToString()));
+
+                    if (!Directory.Exists(absolutePath))
+                    {
+                        Directory.CreateDirectory(absolutePath);
+                    }
+
+                    DiskUtils.SaveImage(file.InputStream, Path.Combine(absolutePath, fileName));
+
+                    return Json(new
+                    {
+                        success = true,
+                        path =
+                            VirtualPathUtility.Combine(UploadPath,
+                                string.Format("{0}/{1}?{2}", id, fileName, DateTime.UtcNow.ToBinary()))
+                    });
+                }
+
+                return Json(new {success = false});
+            }
+            catch
+            {
+                //TODO: Log error
+                return Json(new {success = false});
+            }
         }
 
         [HttpGet]
