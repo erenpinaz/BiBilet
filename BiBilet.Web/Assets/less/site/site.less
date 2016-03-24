@@ -12,10 +12,6 @@
     Styles
    ============================= */
 
-i.glyphicon {
-    margin-right: 8px;
-}
-
 .navbar {
     margin-bottom: 0;
 
@@ -108,16 +104,26 @@ i.glyphicon {
         width: 90%;
         opacity: .2;
     }
+
+    &, & .preview-wrapper {
+        width: 240px;
+    }
 }
 
-#organizer-image-uploader,
-#organizer-image-uploader .preview-wrapper {
-    width: 240px;
-    height: 240px;
+#organizer-image-uploader {
+    &, & .preview-wrapper {
+        height: 240px;
+    }
 }
 
-#event-image-uploader,
-#event-image-uploader .preview-wrapper {
-    width: 240px;
-    height: 360px;
+#event-image-uploader {
+    &, & .preview-wrapper {
+        height: 360px;
+    }
+}
+
+.events, .event-details {
+    i.glyphicon {
+        margin-right: 8px;
+    }
 }

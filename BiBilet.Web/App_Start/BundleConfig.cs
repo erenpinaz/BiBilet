@@ -19,9 +19,10 @@ namespace BiBilet.Web
                 .Include("~/assets/js/bootstrap-datetimepicker.js")
                 .Include("~/assets/js/bootstrap-table/bootstrap-table.js")
                 .Include("~/assets/js/bootstrap-table/locale/bootstrap-table-tr-TR.js")
-                .Include("~/assets/js/plupload/moxie.js")
-                .Include("~/assets/js/plupload/plupload.dev.js")
                 .Include("~/assets/js/site.js"));
+
+            bundles.Add(new ScriptBundle("~/assets/js/plupload/plupload.full.min.js")
+                .Include("~/assets/js/plupload/plupload.full.min.js"));
 
             bundles.Add(new ScriptBundle("~/assets/js/tinymce/tinymce.min.js")
                 .Include("~/assets/js/tinymce/tinymce.min.js"));

@@ -6734,9 +6734,6 @@ button.close {
 /* =============================
     Styles
    ============================= */
-i.glyphicon {
-  margin-right: 8px;
-}
 .navbar {
   margin-bottom: 0;
 }
@@ -6817,12 +6814,20 @@ i.glyphicon {
   opacity: .2;
 }
 #organizer-image-uploader,
-#organizer-image-uploader .preview-wrapper {
+#event-image-uploader,
+#organizer-image-uploader .preview-wrapper,
+#event-image-uploader .preview-wrapper {
   width: 240px;
+}
+#organizer-image-uploader,
+#organizer-image-uploader .preview-wrapper {
   height: 240px;
 }
 #event-image-uploader,
 #event-image-uploader .preview-wrapper {
-  width: 240px;
   height: 360px;
+}
+.events i.glyphicon,
+.event-details i.glyphicon {
+  margin-right: 8px;
 }

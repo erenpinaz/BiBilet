@@ -86,7 +86,7 @@ namespace BiBilet.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = model.UserName, Name = model.Name, Email = model.Email };
+                var user = new IdentityUser {UserName = model.UserName, Name = model.Name, Email = model.Email};
 
                 var organizer = new Organizer
                 {
@@ -168,7 +168,7 @@ namespace BiBilet.Web.Controllers
                             return View(model);
                         }
                         return RedirectToAction("Settings", "Account",
-                            new { message = "Kullanıcı başarıyla güncellendi" });
+                            new {message = "Kullanıcı başarıyla güncellendi"});
                     }
                     AddErrors(result);
                 }
@@ -244,7 +244,7 @@ namespace BiBilet.Web.Controllers
                             await UnitOfWork.SaveChangesAsync();
 
                             return RedirectToAction("Organizer", "Account",
-                                new { id = organizer.OrganizerId, message = "Profil başarıyla güncellendi" });
+                                new {id = organizer.OrganizerId, message = "Profil başarıyla güncellendi"});
                         }
                         ModelState.AddModelError("slug", "Url kısaltması özel olmalıdır");
                     }
@@ -288,7 +288,7 @@ namespace BiBilet.Web.Controllers
                 //TODO: Log error
             }
 
-            return RedirectToAction("Organizer", "Account", new { id = organizer.OrganizerId });
+            return RedirectToAction("Organizer", "Account", new {id = organizer.OrganizerId});
         }
 
         [HttpGet]
@@ -386,12 +386,12 @@ namespace BiBilet.Web.Controllers
                     });
                 }
 
-                return Json(new { success = false });
+                return Json(new {success = false});
             }
             catch
             {
                 //TODO: Log error
-                return Json(new { success = false });
+                return Json(new {success = false});
             }
         }
 
@@ -428,7 +428,7 @@ namespace BiBilet.Web.Controllers
         private async Task SignInAsync(IdentityUser user, bool isPersistent)
         {
             var identity = await _userManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
-            AuthenticationManager.SignIn(new AuthenticationProperties { IsPersistent = isPersistent }, identity);
+            AuthenticationManager.SignIn(new AuthenticationProperties {IsPersistent = isPersistent}, identity);
         }
 
         /// <summary>

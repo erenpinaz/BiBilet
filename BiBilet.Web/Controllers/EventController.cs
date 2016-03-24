@@ -162,7 +162,7 @@ namespace BiBilet.Web.Controllers
                                         Title = ticketVm.Title,
                                         Quantity = ticketVm.Quantity,
                                         Price = ticketVm.Price,
-                                        Type = ticketVm.Type
+                                        Type = ticketVm.Price == decimal.Zero ? TicketType.Free : TicketType.Paid
                                     });
                                 }
                                 else
@@ -175,6 +175,7 @@ namespace BiBilet.Web.Controllers
                                         ticket.Title = ticketVm.Title;
                                         ticket.Quantity = ticketVm.Quantity;
                                         ticket.Price = ticketVm.Price;
+                                        ticket.Type = ticketVm.Price == decimal.Zero ? TicketType.Free : TicketType.Paid;
 
                                         UnitOfWork.TicketRepository.Update(ticket);
                                     }
