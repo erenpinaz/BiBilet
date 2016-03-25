@@ -237,8 +237,8 @@ $(function () {
     }
 
     // Event ticket container configuration
-    var $form = $("#eventForm").find("form");
-    var $ticketContainer = $form.find("#ticket-container");
+    var $eventForm = $("#eventForm").find("form");
+    var $ticketContainer = $eventForm.find("#ticket-container");
     if ($ticketContainer.length > 0) {
 
         // Parses the delete ticket buttons
@@ -253,7 +253,7 @@ $(function () {
                             .done(function (data) {
                                 if (data.result === "success") {
                                     $(this).parents(".ticket-item:first").remove();
-                                    parseForValidations($form);
+                                    parseForValidations($eventForm);
                                 } else {
                                     alert("Bilet silinirken bir hata oluştu.");
                                 }
@@ -275,7 +275,7 @@ $(function () {
                 .done(function (data) {
                     $ticketContainer.find(".panel-body").append(data);
                     parseDeleteTicketButtons($(".delete-ticket:last"));
-                    parseForValidations($form);
+                    parseForValidations($eventForm);
                 })
                 .fail(function (jqXhr, textStatus, error) {
                     alert(error);
