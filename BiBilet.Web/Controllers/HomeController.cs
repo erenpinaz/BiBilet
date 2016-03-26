@@ -20,7 +20,7 @@ namespace BiBilet.Web.Controllers
             var events = await UnitOfWork.EventRepository.GetEventsAsync();
             var categories = await UnitOfWork.CategoryRepository.GetAllAsync();
 
-            var model = new HomeViewModel()
+            var model = new HomeViewModel
             {
                 HotEvents =
                     events.Where(e => e.EndDate >= DateTime.UtcNow)
