@@ -431,8 +431,7 @@ namespace BiBilet.Web.Controllers
                     return Json(new
                     {
                         success = true,
-                        path = Path.Combine(UploadPath,
-                            string.Format("{0}?{1}", fileName, DateTime.UtcNow.ToBinary()))
+                        path = Path.Combine(UploadPath, fileName)
                     });
                 }
 
