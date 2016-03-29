@@ -190,14 +190,13 @@
     <Content Include="Assets\js\bootstrap-table\bootstrap-table.min.js" />
     <Content Include="Assets\js\bootstrap-table\locale\bootstrap-table-tr-TR.js" />
     <Content Include="Assets\js\bootstrap-table\locale\bootstrap-table-tr-TR.min.js" />
+    <Content Include="Assets\js\jquery.cropit.js" />
+    <Content Include="Assets\js\jquery.form.js" />
     <Content Include="Assets\js\jquery.validate.unobtrusive.js" />
     <Content Include="Assets\js\bootstrap.js" />
     <Content Include="Assets\js\jquery-1.12.1.js" />
     <Content Include="Assets\js\jquery.validate.js" />
     <Content Include="Assets\js\moment.js" />
-    <Content Include="Assets\js\plupload\Moxie.swf" />
-    <Content Include="Assets\js\plupload\Moxie.xap" />
-    <Content Include="Assets\js\plupload\plupload.full.min.js" />
     <Content Include="Assets\js\site.js" />
     <Content Include="Assets\js\tinymce\jquery.tinymce.min.js" />
     <Content Include="Assets\js\tinymce\langs\tr_TR.js" />
@@ -381,11 +380,13 @@
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Event\Details.cshtml" />
     <Content Include="Views\Account\Settings.cshtml" />
-    <Content Include="Views\Account\Organizer.cshtml" />
+    <Content Include="Views\Account\UpdateOrganizer.cshtml" />
     <Content Include="Views\Account\DeleteOrganizer.cshtml" />
     <Content Include="Views\Event\MyEvents.cshtml" />
     <Content Include="Views\Event\UpdateEvent.cshtml" />
     <Content Include="Views\Event\_TicketItem.cshtml" />
+    <Content Include="Views\Event\CreateEvent.cshtml" />
+    <Content Include="Views\Event\DeleteEvent.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -420,14 +421,12 @@
     <Compile Include="Identity\UserStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Utils\DiskUtils.cs" />
-    <Compile Include="Utils\OptimizationUtils.cs" />
+    <Compile Include="Utils\FileUtils.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="ViewModels\EventViewModels.cs" />
     <Compile Include="ViewModels\HomeViewModels.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Assets\images\category\" />
     <Folder Include="Assets\uploads\" />
   </ItemGroup>
   <ItemGroup>

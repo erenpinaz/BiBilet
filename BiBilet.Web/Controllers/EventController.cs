@@ -3,14 +3,13 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.UI;
 using BiBilet.Domain;
-using BiBilet.Web.ViewModels;
-using Microsoft.AspNet.Identity;
 using BiBilet.Domain.Entities.Application;
 using BiBilet.Web.Utils;
+using BiBilet.Web.ViewModels;
+using Microsoft.AspNet.Identity;
 
 namespace BiBilet.Web.Controllers
 {
@@ -18,7 +17,7 @@ namespace BiBilet.Web.Controllers
     public class EventController : BaseController
     {
         private const string UploadPath = "/assets/uploads/events/";
-        private const string PlaceholderImagePath = "/assets/images/placeholder.png";
+        private const string PlaceholderImagePath = "/assets/images/event-placeholder.png";
 
         public EventController(IUnitOfWork unitOfWork)
             : base(unitOfWork)
@@ -31,8 +30,8 @@ namespace BiBilet.Web.Controllers
             return View();
         }
 
-        [AllowAnonymous]
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult> Details(string slug)
         {
             var eventObj = await UnitOfWork.EventRepository.GetEventAsync(slug);
@@ -41,7 +40,7 @@ namespace BiBilet.Web.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound);
             }
 
-            return View(new EventViewModel()
+            return View(new EventViewModel
             {
                 Title = eventObj.Title,
                 Description = eventObj.Description,
@@ -60,7 +59,7 @@ namespace BiBilet.Web.Controllers
                 TopicName = eventObj.Topic.Name,
                 SubTopicName = eventObj.SubTopic.Name,
                 IsLive = eventObj.StartDate >= DateTime.UtcNow,
-                Tickets = eventObj.Tickets.Select(t => new TicketViewModel()
+                Tickets = eventObj.Tickets.Select(t => new TicketViewModel
                 {
                     TicketId = t.TicketId,
                     Title = t.Title,
@@ -72,9 +71,142 @@ namespace BiBilet.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> UpdateEvent(Guid id, string message)
+        public async Task<ActionResult> CreateEvent()
         {
-            var eventObj = await UnitOfWork.EventRepository.GetUserEventAsync(id, GetGuid(User.Identity.GetUserId()));
+            var organizers = await UnitOfWork.OrganizerRepository.GetAllAsync();
+            var categories = await UnitOfWork.CategoryRepository.GetAllAsync();
+            var topics = await UnitOfWork.TopicRepository.GetAllAsync();
+            var subTopics = await UnitOfWork.SubTopicRepository.GetSubTopicsAsync(topics[0].TopicId);
+
+            return View(new EventEditModel
+            {
+                Organizers =
+                    new SelectList(organizers, "OrganizerId", "Name"),
+                Categories =
+                    new SelectList(categories, "CategoryId", "Name"),
+                Topics =
+                    new SelectList(topics, "TopicId", "Name"),
+                SubTopics =
+                    new SelectList(subTopics, "SubTopicId",
+                        "Name"),
+                Image = PlaceholderImagePath,
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.UtcNow
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateEvent(EventEditModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (model.Tickets.Any())
+                    {
+                        if (await IsEventSlugUnique(model.Slug, model.EventId))
+                        {
+                            var eventObj = new Event
+                            {
+                                OrganizerId = model.OrganizerId,
+                                CategoryId = model.CategoryId,
+                                TopicId = model.TopicId,
+                                SubTopicId = model.SubTopicId,
+                                EventId = Guid.NewGuid(),
+                                Title = model.Title,
+                                Description = model.Description,
+                                Image = model.Image ?? PlaceholderImagePath,
+                                Slug = model.Slug,
+                                Published = model.Published,
+                                StartDate = model.StartDate,
+                                EndDate = model.EndDate,
+                                Venue = new Venue
+                                {
+                                    VenueId = Guid.NewGuid(),
+                                    Name = model.VenueName,
+                                    Address = model.VenueAddress,
+                                    City = model.VenueCity,
+                                    Country = model.VenueCountry
+                                }
+                            };
+
+                            UnitOfWork.EventRepository.Add(eventObj);
+
+                            foreach (var ticketVm in model.Tickets)
+                            {
+                                if (ticketVm.TicketId == Guid.Empty)
+                                {
+                                    UnitOfWork.TicketRepository.Add(new Ticket
+                                    {
+                                        TicketId = Guid.NewGuid(),
+                                        EventId = eventObj.EventId,
+                                        Title = ticketVm.Title,
+                                        Quantity = ticketVm.Quantity,
+                                        Price = ticketVm.Price,
+                                        Type = ticketVm.Price == decimal.Zero ? TicketType.Free : TicketType.Paid
+                                    });
+                                }
+                                else
+                                {
+                                    var ticket =
+                                        eventObj.Tickets.FirstOrDefault(t => t.TicketId == ticketVm.TicketId);
+                                    if (ticket != null)
+                                    {
+                                        ticket.EventId = eventObj.EventId;
+                                        ticket.Title = ticketVm.Title;
+                                        ticket.Quantity = ticketVm.Quantity;
+                                        ticket.Price = ticketVm.Price;
+                                        ticket.Type = ticketVm.Price == decimal.Zero ? TicketType.Free : TicketType.Paid;
+
+                                        UnitOfWork.TicketRepository.Update(ticket);
+                                    }
+                                }
+                            }
+
+                            await UnitOfWork.SaveChangesAsync();
+
+                            return RedirectToAction("MyEvents", "Event");
+                        }
+                        ModelState.AddModelError("", "Url kısaltması özel olmalıdır");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Etkinliğe en az bir bilet eklenmelidir");
+                    }
+                }
+                catch
+                {
+                    //TODO: Log error
+                    ModelState.AddModelError("", "Etkinlik oluşturulurken bir hata oluştu");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Lütfen tüm alanları doğru şekilde doldurunuz");
+            }
+
+            model.Organizers = new SelectList(await UnitOfWork.OrganizerRepository.GetAllAsync(), "OrganizerId", "Name",
+                model.OrganizerId);
+            model.Categories = new SelectList(await UnitOfWork.CategoryRepository.GetAllAsync(), "CategoryId", "Name",
+                model.CategoryId);
+            model.Topics = new SelectList(await UnitOfWork.TopicRepository.GetAllAsync(), "TopicId", "Name",
+                model.TopicId);
+            model.SubTopics = new SelectList(await UnitOfWork.SubTopicRepository.GetSubTopicsAsync(model.TopicId),
+                "SubTopicId", "Name", model.SubTopicId);
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> UpdateEvent(Guid? id, string message)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var eventObj =
+                await UnitOfWork.EventRepository.GetUserEventAsync(id.Value, GetGuid(User.Identity.GetUserId()));
             if (eventObj == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound);
@@ -82,7 +214,7 @@ namespace BiBilet.Web.Controllers
 
             ViewBag.StatusMessage = message;
 
-            return View(new EventEditModel()
+            return View(new EventEditModel
             {
                 Organizers =
                     new SelectList(await UnitOfWork.OrganizerRepository.GetAllAsync(), "OrganizerId", "Name",
@@ -112,7 +244,7 @@ namespace BiBilet.Web.Controllers
                 VenueAddress = eventObj.Venue.Address,
                 VenueCity = eventObj.Venue.City,
                 VenueCountry = eventObj.Venue.Country,
-                Tickets = eventObj.Tickets.Select(t => new TicketViewModel()
+                Tickets = eventObj.Tickets.Select(t => new TicketViewModel
                 {
                     TicketId = t.TicketId,
                     Title = t.Title,
@@ -125,9 +257,10 @@ namespace BiBilet.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateEvent(Guid id, EventEditModel model)
+        public async Task<ActionResult> UpdateEvent(EventEditModel model)
         {
-            var eventObj = await UnitOfWork.EventRepository.GetUserEventAsync(id, GetGuid(User.Identity.GetUserId()));
+            var eventObj =
+                await UnitOfWork.EventRepository.GetUserEventAsync(model.EventId, GetGuid(User.Identity.GetUserId()));
             if (eventObj == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound);
@@ -158,7 +291,7 @@ namespace BiBilet.Web.Controllers
                             {
                                 if (ticketVm.TicketId == Guid.Empty)
                                 {
-                                    UnitOfWork.TicketRepository.Add(new Ticket()
+                                    UnitOfWork.TicketRepository.Add(new Ticket
                                     {
                                         TicketId = Guid.NewGuid(),
                                         EventId = eventObj.EventId,
@@ -191,10 +324,7 @@ namespace BiBilet.Web.Controllers
                             return RedirectToAction("UpdateEvent", "Event",
                                 new {id = eventObj.EventId, message = "Etkinlik başarıyla güncellendi"});
                         }
-                        else
-                        {
-                            ModelState.AddModelError("slug", "Url kısaltması özel olmalıdır");
-                        }
+                        ModelState.AddModelError("", "Url kısaltması özel olmalıdır");
                     }
                     else
                     {
@@ -224,10 +354,33 @@ namespace BiBilet.Web.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public async Task<ActionResult> UploadEventImage(Guid id)
+        [HttpGet]
+        public async Task<ActionResult> DeleteEvent(Guid? id)
         {
-            var eventObj = await UnitOfWork.EventRepository.GetUserEventAsync(id, GetGuid(User.Identity.GetUserId()));
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var eventObj =
+                await UnitOfWork.EventRepository.GetUserEventAsync(id.Value, GetGuid(User.Identity.GetUserId()));
+            if (eventObj == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            }
+
+            return View(new EventEditModel
+            {
+                EventId = eventObj.EventId,
+                Title = eventObj.Title
+            });
+        }
+
+        [HttpPost, ActionName("DeleteEvent")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ConfirmDeleteEvent(Guid id)
+        {
+            var eventObj =
+                await UnitOfWork.EventRepository.GetUserEventAsync(id, GetGuid(User.Identity.GetUserId()));
             if (eventObj == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound);
@@ -235,26 +388,51 @@ namespace BiBilet.Web.Controllers
 
             try
             {
+                foreach (var ticket in eventObj.Tickets.ToList())
+                {
+                    UnitOfWork.TicketRepository.Remove(ticket);
+                }
+
+                UnitOfWork.EventRepository.Remove(eventObj);
+                await UnitOfWork.SaveChangesAsync();
+
+                if (eventObj.Image != PlaceholderImagePath)
+                {
+                    FileUtils.DeleteFile(Server.MapPath(eventObj.Image));
+                }
+
+                return RedirectToAction("MyEvents", "Event");
+            }
+            catch
+            {
+                //TODO: Log error
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UploadEventImage(int x, int y, int w, int h)
+        {
+            try
+            {
                 var file = Request.Files[0];
                 if (file != null)
                 {
-                    const string fileName = "event-image.jpg";
-
-                    var absolutePath = Server.MapPath(Path.Combine(UploadPath, id.ToString()));
-
+                    var absolutePath = Server.MapPath(Path.Combine(UploadPath));
                     if (!Directory.Exists(absolutePath))
                     {
                         Directory.CreateDirectory(absolutePath);
                     }
 
-                    DiskUtils.SaveImage(file.InputStream, Path.Combine(absolutePath, fileName));
+                    var fileName = FileUtils.GenerateFileName("e", "jpg");
+                    FileUtils.CropSaveImage(file.InputStream, x, y, w, h, Path.Combine(absolutePath, fileName));
 
                     return Json(new
                     {
                         success = true,
-                        path =
-                            VirtualPathUtility.Combine(UploadPath,
-                                string.Format("{0}/{1}?{2}", id, fileName, DateTime.UtcNow.ToBinary()))
+                        path = Path.Combine(UploadPath,
+                            string.Format("{0}?{1}", fileName, DateTime.UtcNow.ToBinary()))
                     });
                 }
 
@@ -270,7 +448,7 @@ namespace BiBilet.Web.Controllers
         [HttpGet]
         public ActionResult AddTicketItem(string type)
         {
-            return PartialView("_TicketItem", new TicketViewModel()
+            return PartialView("_TicketItem", new TicketViewModel
             {
                 Type = type == "free" ? TicketType.Free : TicketType.Paid
             });
@@ -284,24 +462,25 @@ namespace BiBilet.Web.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var events = await UnitOfWork.EventRepository.GetEventsAsync(GetGuid(User.Identity.GetUserId()));
-            var json = events.OrderBy(e => e.StartDate).Select(e => new
-            {
-                eventid = e.EventId,
-                title = e.Title,
-                organizer = e.Organizer.Name,
-                category = e.Category.Name,
-                topic = string.Format("{0} / {1}", e.Topic.Name, e.SubTopic.Name),
-                status = e.Published,
-                startdate = e.StartDate,
-                enddate = e.EndDate
-            });
+            var events = await UnitOfWork.EventRepository.GetAllAsync();
+            var json = events.Where(e => e.Organizer.UserId == GetGuid(User.Identity.GetUserId()))
+                .OrderBy(e => e.StartDate).Select(e => new
+                {
+                    eventid = e.EventId,
+                    title = e.Title,
+                    organizer = e.Organizer.Name,
+                    category = e.Category.Name,
+                    topic = string.Format("{0} / {1}", e.Topic.Name, e.SubTopic.Name),
+                    status = e.Published,
+                    startdate = e.StartDate,
+                    enddate = e.EndDate
+                });
 
             return Json(json, JsonRequestBehavior.AllowGet);
         }
 
-        [OutputCache(Duration = 3600, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "topicId")]
         [HttpGet]
+        [OutputCache(Duration = 3600, Location = OutputCacheLocation.ServerAndClient, VaryByParam = "topicId")]
         public async Task<ActionResult> PopulateSubTopics(Guid topicId)
         {
             if (!Request.IsAjaxRequest())

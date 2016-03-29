@@ -1,13 +1,13 @@
 ﻿@model BiBilet.Web.ViewModels.EventEditModel
 
 @{
-    ViewBag.Title = "Düzenleniyor: " + Model.Title;
+    ViewBag.Title = "Etkinlik oluştur";
 }
 
 <div class="row">
     <div class="col-md-offset-2 col-md-8">
         <section id="eventForm">
-            @using (Html.BeginForm("UpdateEvent", "Event", new {id = Model.EventId}, FormMethod.Post, new {@class = "form-horizontal", role = "form"}))
+            @using (Html.BeginForm("CreateEvent", "Event", FormMethod.Post, new {@class = "form-horizontal", role = "form"}))
             {
                 @Html.AntiForgeryToken()
 
@@ -15,7 +15,6 @@
 
                 @Html.ValidationSummary(true)
                 @Html.HiddenFor(m => m.EventId)
-                @Html.HiddenFor(m => m.VenueId)
 
                 <h4 class="page-header">Genel bilgiler</h4>
 

@@ -340,13 +340,13 @@ namespace BiBilet.Web.Identity
 
         public Task<bool> GetEmailConfirmedAsync(IdentityUser user)
         {
-            //TODO: Implement mail activation
+            //TODO: Implement mail confirmation
             throw new NotImplementedException();
         }
 
         public Task SetEmailConfirmedAsync(IdentityUser user, bool confirmed)
         {
-            //TODO: Implement mail activation
+            //TODO: Implement mail confirmation
             throw new NotImplementedException();
         }
 

@@ -14,6 +14,8 @@ namespace BiBilet.Web
             bundles.Add(new ScriptBundle("~/assets/js/app")
                 .Include("~/assets/js/jquery-{version}.js")
                 .Include("~/assets/js/jquery.validate*")
+                .Include("~/assets/js/jquery.form.js")
+                .Include("~/assets/js/jquery.cropit.js")
                 .Include("~/assets/js/moment.js")
                 .Include("~/assets/js/bootstrap.js")
                 .Include("~/assets/js/bootstrap-datetimepicker.js")

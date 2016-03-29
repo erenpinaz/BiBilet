@@ -18,7 +18,7 @@
 
                 <div class="alert alert-danger">
                     <b>Dikkat:</b> Bu organizatör tarafından gerçekleştirilen
-                    <b>@Model.EventCount</b> adet etkinlik ve bu etkinliklere ait tüm biletler silinecektir!
+                    <b>Tüm etkinlikler ve bu etkinliklere ait tüm biletler silinecektir!</b>
                 </div>
 
                 <p class="lead">
@@ -30,7 +30,7 @@
                     @Html.AntiForgeryToken()
 
                     <button type="submit" class="btn btn-primary">Onayla</button>
-                    <a href="@Url.Action("Organizer", "Account")" class="btn btn-default">İptal</a>
+                    <a href="@Url.Action("UpdateOrganizer", "Account")" class="btn btn-default">İptal</a>
                 }
             </div>
         </div>

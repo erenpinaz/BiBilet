@@ -4,9 +4,14 @@
     Author      : Nejdet Eren Pinaz
    ====================================================== */
 
+//TODO: Refactor all the code
+
 if (!window.jQuery) {
     throw "Site scripts requires jQuery.";
 }
+
+// Don't validate ignored fields
+jQuery.validator.defaults.ignore = ".ignore-validation";
 
 $(function () {
     // Initialize moment
@@ -19,18 +24,6 @@ $(function () {
             $('table[data-toggle="table"]').bootstrapTable("resetView");
         });
     }
-
-    // Localize (tr) jQuery validation for decimal and date
-    jQuery.extend(jQuery.validator.methods, {
-        number: function (value, element) {
-            return this.optional(element)
-             || /^-?(?:\d+|\d{1,3}(?:[\s\,]\d{3})+)(?:[\,]\d+)?$/.test(value);
-        },
-        date: function (value, element) {
-            return this.optional(element)
-                || moment(new Date(value)).format();
-        }
-    });
 
     // Update select lists when browser back button pressed
     // Credits: http://stackoverflow.com/questions/4370819/select-menu-not-being-restored-when-back-button-used/28302447#28302447
@@ -45,262 +38,252 @@ $(function () {
         }
     });
 
-    // Organizer description tinymce
-    var $organizerDescription = $("#organizerForm").find("[data-tinymce='organizer']");
-    if ($organizerDescription.length > 0) {
-        tinymce.init({
-            selector: "textarea[data-tinymce='organizer']",
-            language: "tr_TR",
-            autosave_interval: "20s",
-            relative_urls: false,
-            entity_encoding: "raw",
-            min_height: 300,
-            plugins: [
-                "advlist autolink lists link image charmap print preview anchor",
-                "searchreplace visualblocks fullscreen autosave",
-                "insertdatetime media table contextmenu paste"
-            ],
-            toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
-        });
-    }
+    // Localize (tr) jQuery validation for decimal and date
+    jQuery.extend(jQuery.validator.methods, {
+        number: function (value, element) {
+            return this.optional(element)
+                || /^-?(?:\d+|\d{1,3}(?:[\s\,]\d{3})+)(?:[\,]\d+)?$/.test(value);
+        },
+        date: function (value, element) {
+            return this.optional(element)
+                || moment(new Date(value)).format();
+        }
+    });
 
-    // Organizer profile select list
-    var $profileSelect = $("#organizerForm").find("#profile-select");
-    if ($profileSelect.length > 0) {
-        $($profileSelect).on("change", function () {
-            window.location = $profileSelect.find("option:selected").data("url");
-        });
-    }
+    // Configure image uploaders
+    var $imageUploader = $("#imageUploader");
+    var $imageUploaderTrigger = $("button.uploader-trigger");
 
-    // Organizer profile image uploader
-    var $organizerImageUploader = $("#organizer-image-uploader");
-    if ($organizerImageUploader.length > 0) {
-        var $organizerPreview = $organizerImageUploader.find("#preview").get(0);
-        var $organizerImage = $organizerImageUploader.find("#Image").get(0);
+    if ($imageUploader.length > 0) {
+        var $cropForm = $imageUploader.find("form");
+        var $cropEditor = $imageUploader.find(".crop-editor");
+        var $fileInput = $cropEditor.find(".cropit-image-input");
 
-        var ouploader = new plupload.Uploader({
-            runtimes: "html5,flash",
-            browse_button: "picker",
-            container: "organizer-image-uploader",
-            url: $organizerImageUploader.data("url"),
-            max_file_size: "5mb",
-            dragdrop: false,
-            multiple_queues: false,
-            multi_selection: false,
-            max_file_count: 1,
-            resize: {
-                width: 240,
-                height: 240,
-                crop: true
-            },
-            filters: [
-                { title: "Image files", extensions: "jpg,jpeg,gif,png" }
-            ],
-            flash_swf_url: "/assets/js/plupload/Moxie.swf",
-            silverlight_xap_url: "/assets/js/plupload/Moxie.xap"
-        });
+        $imageUploaderTrigger.on("click", function (e) {
+            e.preventDefault();
 
-        ouploader.bind("Init", function (up, params) {
-            $("#runtime").html("Current runtime: " + params.runtime);
-        });
-
-        ouploader.bind("Browse", function () {
-            ouploader.splice();
-            ouploader.refresh();
-        });
-
-        ouploader.bind("FilesAdded", function (up, file) {
-            up.start();
-        });
-
-        ouploader.bind("UploadProgress", function (up, file) {
-            var $progress = $organizerImageUploader.find("#progress").find(".progress-bar").get(0);
-            if ($progress) {
-                $($progress)
-                    .text(file.percent)
-                    .css("width", file.percent + "%")
-                    .attr("aria-valuenow", file.percent);
+            if ($fileInput.get(0).files.length === 0) {
+                $fileInput.trigger("click");
+            } else {
+                $imageUploader.modal("show");
             }
         });
 
-        ouploader.bind("FileUploaded", function (up, file, data) {
-            var response = jQuery.parseJSON(data.response);
+        $cropEditor.cropit({
+            width: $cropEditor.data("width"),
+            height: $cropEditor.data("height"),
+            smallImage: "stretch",
+            onFileChange: function (e) {
+                var file = e.target.files[0];
 
-            if (response.path && $organizerPreview && $organizerImage) {
-                $($organizerPreview).attr("src", response.path);
-                $($organizerImage).attr("value", response.path);
+                if (file) {
+                    if (file.type.match("image/jpeg") || file.type.match("image/jpg") ||
+                        file.type.match("image/gif") || file.type.match("image/png")) {
+                        $imageUploader.modal("show");
+                    }
+                } else {
+                    alert("Dosya seçilmedi.");
+                }
             }
         });
 
-        ouploader.init();
+        $cropForm.on("submit", function (ev) {
+            ev.preventDefault();
+
+            var offset = $cropEditor.cropit("offset");
+            var previewSize = $cropEditor.cropit("previewSize");
+            var zoom = $cropEditor.cropit("zoom");
+
+            var x1 = Math.round(Math.abs(offset.x) / zoom);
+            var x2 = Math.round((Math.abs(offset.x) + previewSize.width) / zoom);
+            var y1 = Math.round(Math.abs(offset.y) / zoom);
+            var y2 = Math.round((Math.abs(offset.y) + previewSize.height) / zoom);
+
+            $(this).ajaxSubmit({
+                cache: false,
+                url: this.action,
+                method: this.method,
+                resetForm: true,
+                data: {
+                    x: x1,
+                    y: y1,
+                    w: (x2 - x1),
+                    h: (y2 - y1)
+                },
+                uploadProgress: function (event, position, total, percentComplete) {
+                    $(".progress-bar")
+                            .css("width", percentComplete + "%")
+                            .attr("aria-valuenow", percentComplete);
+                },
+                success: function (response) {
+                    var $finalPreview = $(".uploader-preview");
+                    var $finalImage = $("#Image");
+                    if ($finalPreview && $finalImage) {
+                        $finalPreview.attr("src", response.path);
+                        $finalImage.val(response.path);
+                    }
+                },
+                complete: function() {
+                    $(".progress-bar")
+                            .css("width", 0)
+                            .attr("aria-valuenow", 0);
+
+                    $imageUploader.modal("hide");
+                }
+            });
+        });
+    }
+});
+
+$(function () {
+
+    // Organizer form configuration
+    var $organizerForm = $("#organizerForm").find("form");
+    if ($organizerForm.length > 0) {
+        // Organizer description tinymce
+        var $organizerDescription = $organizerForm.find("[data-tinymce='organizer']");
+        if ($organizerDescription.length > 0) {
+            tinymce.init({
+                selector: "textarea[data-tinymce='organizer']",
+                language: "tr_TR",
+                autosave_interval: "20s",
+                relative_urls: false,
+                entity_encoding: "raw",
+                min_height: 300,
+                setup: function (editor) {
+                    editor.on("change", function () {
+                        editor.save();
+                    });
+                },
+                plugins: [
+                    "advlist autolink lists link image charmap print preview anchor",
+                    "searchreplace visualblocks fullscreen autosave",
+                    "insertdatetime media table contextmenu paste"
+                ],
+                toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+            });
+        }
+
+        // Organizer profile select list
+        var $profileSelect = $organizerForm.find("#profile-select");
+        if ($profileSelect.length > 0) {
+            $($profileSelect).on("change", function () {
+                window.location = $profileSelect.find("option:selected").data("url");
+            });
+        }
     }
 
-    // Event linked datetime pickers
-    var $eventStartDate = $("#eventForm").find("#StartDate");
-    var $eventEndDate = $("#eventForm").find("#EndDate");
-    if ($eventStartDate.length > 0 && $eventEndDate.length > 0) {
-        $eventStartDate.datetimepicker({
-            locale: "tr"
-        });
-        $($eventEndDate).datetimepicker({
-            locale: "tr",
-            useCurrent: false
-        });
-        $($eventStartDate).on("dp.change", function (e) {
-            $($eventEndDate).data("DateTimePicker").minDate(e.date);
-        });
-        $($eventEndDate).on("dp.change", function (e) {
-            $($eventStartDate).data("DateTimePicker").maxDate(e.date);
-        });
-    }
-
-    // Event description tinymce
-    var $eventDescription = $("#eventForm").find("[data-tinymce='event']");
-    if ($eventDescription.length > 0) {
-        tinymce.init({
-            selector: "textarea[data-tinymce='event']",
-            language: "tr_TR",
-            autosave_interval: "10s",
-            relative_urls: false,
-            entity_encoding: "raw",
-            min_height: 300,
-            plugins: [
-                "advlist autolink lists link image charmap print preview anchor",
-                "searchreplace visualblocks fullscreen autosave",
-                "insertdatetime media table contextmenu paste"
-            ],
-            toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
-        });
-    }
-
-    // Event image uploader
-    var $eventImageUploader = $("#event-image-uploader");
-    if ($eventImageUploader.length > 0) {
-        var $eventPreview = $eventImageUploader.find("#preview").get(0);
-        var $eventImage = $eventImageUploader.find("#Image").get(0);
-
-        var euploader = new plupload.Uploader({
-            runtimes: "html5,flash",
-            browse_button: "picker",
-            container: "event-image-uploader",
-            url: $eventImageUploader.data("url"),
-            max_file_size: "5mb",
-            dragdrop: false,
-            multiple_queues: false,
-            multi_selection: false,
-            max_file_count: 1,
-            resize: {
-                width: 240,
-                height: 360,
-                crop: true
-            },
-            filters: [
-                { title: "Image files", extensions: "jpg,jpeg,gif,png" }
-            ],
-            flash_swf_url: "/assets/js/plupload/Moxie.swf",
-            silverlight_xap_url: "/assets/js/plupload/Moxie.xap"
-        });
-
-        euploader.bind("Init", function (up, params) {
-            $("#runtime").html("Current runtime: " + params.runtime);
-        });
-
-        euploader.bind("Browse", function () {
-            euploader.splice();
-            euploader.refresh();
-        });
-
-        euploader.bind("FilesAdded", function (up, file) {
-            up.start();
-        });
-
-        euploader.bind("UploadProgress", function (up, file) {
-            var $progress = $organizerImageUploader.find("#progress").find(".progress-bar").get(0);
-            if ($progress) {
-                $($progress)
-                    .text(file.percent)
-                    .css("width", file.percent + "%")
-                    .attr("aria-valuenow", file.percent);
-            }
-        });
-
-        euploader.bind("FileUploaded", function (up, file, data) {
-            var response = jQuery.parseJSON(data.response);
-
-            if (response.path && $eventPreview && $eventImage) {
-                $($eventPreview).attr("src", response.path);
-                $($eventImage).attr("value", response.path);
-            }
-        });
-
-        euploader.init();
-    }
-
-    // Event ticket container configuration
+    // Event form configuration
     var $eventForm = $("#eventForm").find("form");
-    var $ticketContainer = $eventForm.find("#ticket-container");
-    if ($ticketContainer.length > 0) {
+    if ($eventForm.length > 0) {
 
-        // Parses the delete ticket buttons
-        var parseDeleteTicketButtons = function (selector) {
-            $(selector).on("click", function (e) {
+        // Event linked datetime pickers
+        var $eventStartDate = $eventForm.find("#StartDate");
+        var $eventEndDate = $eventForm.find("#EndDate");
+        if ($eventStartDate.length > 0 && $eventEndDate.length > 0) {
+            $eventStartDate.datetimepicker({
+                locale: "tr"
+            });
+            $($eventEndDate).datetimepicker({
+                locale: "tr",
+                useCurrent: false
+            });
+            $($eventStartDate).on("dp.change", function (e) {
+                $($eventEndDate).data("DateTimePicker").minDate(e.date);
+            });
+            $($eventEndDate).on("dp.change", function (e) {
+                $($eventStartDate).data("DateTimePicker").maxDate(e.date);
+            });
+        }
+
+        // Event description tinymce
+        var $eventDescription = $eventForm.find("[data-tinymce='event']");
+        if ($eventDescription.length > 0) {
+            tinymce.init({
+                selector: "textarea[data-tinymce='event']",
+                language: "tr_TR",
+                autosave_interval: "10s",
+                relative_urls: false,
+                entity_encoding: "raw",
+                min_height: 300,
+                setup: function (editor) {
+                    editor.on("change", function () {
+                        editor.save();
+                    });
+                },
+                plugins: [
+                    "advlist autolink lists link image charmap print preview anchor",
+                    "searchreplace visualblocks fullscreen autosave",
+                    "insertdatetime media table contextmenu paste"
+                ],
+                toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+            });
+        }
+
+        // Event ticket container configuration
+        var $ticketContainer = $eventForm.find("#ticket-container");
+        if ($ticketContainer.length > 0) {
+
+            // Parses the delete ticket buttons
+            var parseDeleteTicketButtons = function (selector) {
+                $(selector).on("click", function (e) {
+                    e.preventDefault();
+
+                    var ticketId = $(selector).data("id");
+                    if (ticketId) {
+                        if (confirm("Bu bileti silmek istiyor musunuz?")) {
+                            $.post("/ticket/deleteticket?id=" + ticketId, function () { })
+                                .done(function (data) {
+                                    if (data.result === "success") {
+                                        $(this).parents(".ticket-item:first").remove();
+                                        parseForValidations($eventForm);
+                                    } else {
+                                        alert("Bilet silinirken bir hata oluştu.");
+                                    }
+                                })
+                                .fail(function (jqXhr, textStatus, error) {
+                                    alert(error);
+                                });
+                        }
+                    }
+                });
+            }
+            parseDeleteTicketButtons($(".delete-ticket"));
+
+            var $createTicketButtons = $ticketContainer.find(".create-ticket");
+            $createTicketButtons.on("click", function (e) {
                 e.preventDefault();
 
-                var ticketId = $(selector).data("id");
-                if (ticketId) {
-                    if (confirm("Bu bileti silmek istiyor musunuz?")) {
-                        $.post("/ticket/deleteticket?id=" + ticketId, function () { })
-                            .done(function (data) {
-                                if (data.result === "success") {
-                                    $(this).parents(".ticket-item:first").remove();
-                                    parseForValidations($eventForm);
-                                } else {
-                                    alert("Bilet silinirken bir hata oluştu.");
-                                }
-                            })
-                            .fail(function (jqXhr, textStatus, error) {
-                                alert(error);
-                            });
-                    }
+                $.get("/event/addticketitem?type=" + $(this).data("type"), function () { })
+                    .done(function (data) {
+                        $ticketContainer.find(".panel-body").append(data);
+                        parseDeleteTicketButtons($(".delete-ticket:last"));
+                        parseForValidations($eventForm);
+                    })
+                    .fail(function (jqXhr, textStatus, error) {
+                        alert(error);
+                    });
+            });
+        }
+
+        // Event populate sub topics
+        var $topicList = $eventForm.find("#TopicId");
+        var $subTopicList = $eventForm.find("#SubTopicId");
+        if ($topicList.length > 0 && $subTopicList.length > 0) {
+            $topicList.on("change", function () {
+                var topicId = $(this).val();
+                if (topicId) {
+                    $subTopicList.empty();
+
+                    $.getJSON("/event/populatesubtopics?topicId=" + topicId, function (data) {
+                        $.each(data, function (i, subTopic) {
+                            $subTopicList.append("<option value='" + subTopic.subtopicid + "'>" + subTopic.name + "</option>");
+                        });
+                    });
                 }
             });
         }
-        parseDeleteTicketButtons($(".delete-ticket"));
-
-        var $createTicketButtons = $ticketContainer.find(".create-ticket");
-        $createTicketButtons.on("click", function (e) {
-            e.preventDefault();
-
-            $.get("/event/addticketitem?type=" + $(this).data("type"), function () { })
-                .done(function (data) {
-                    $ticketContainer.find(".panel-body").append(data);
-                    parseDeleteTicketButtons($(".delete-ticket:last"));
-                    parseForValidations($eventForm);
-                })
-                .fail(function (jqXhr, textStatus, error) {
-                    alert(error);
-                });
-        });
     }
-
-    // Event populate sub topics
-    var $topicList = $("#eventForm").find("#TopicId");
-    var $subTopicList = $("#eventForm").find("#SubTopicId");
-    if ($topicList.length > 0 && $subTopicList.length > 0) {
-        $topicList.on("change", function () {
-            var topicId = $(this).val();
-            if (topicId) {
-                $subTopicList.empty();
-
-                $.getJSON("/event/populatesubtopics?topicId=" + topicId, function (data) {
-                    $.each(data, function (i, subTopic) {
-                        $subTopicList.append("<option value='" + subTopic.subtopicid + "'>" + subTopic.name + "</option>");
-                    });
-                });
-            }
-        });
-    }
-
 });
 
 /* ========================

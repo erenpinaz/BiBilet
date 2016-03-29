@@ -36,7 +36,6 @@ namespace BiBilet.Web.ViewModels
         [Display(Name = "Url Kısaltması")]
         public string Slug { get; set; }
 
-        public int EventCount { get; set; }
         public bool IsRemovable { get; set; }
     }
 

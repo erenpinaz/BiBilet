@@ -48,6 +48,7 @@ namespace BiBilet.Web.Controllers
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
+
             return View();
         }
 
@@ -167,6 +168,7 @@ namespace BiBilet.Web.Controllers
 
                             return View(model);
                         }
+
                         return RedirectToAction("Settings", "Account",
                             new {message = "Kullanıcı başarıyla güncellendi"});
                     }
@@ -177,90 +179,6 @@ namespace BiBilet.Web.Controllers
                     ModelState.AddModelError("OldPassword", "Hatalı şifre girdiniz");
                 }
             }
-            return View(model);
-        }
-
-        [HttpGet]
-        public async Task<ActionResult> Organizer(Guid? id, string message)
-        {
-            var organizers =
-                await UnitOfWork.OrganizerRepository.GetUserOrganizersAsync(GetGuid(User.Identity.GetUserId()));
-
-            var organizer = id.HasValue
-                ? organizers.FirstOrDefault(o => o.OrganizerId.Equals(id.Value))
-                : organizers.First();
-
-            if (organizer == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
-            }
-
-            var model = new OrganizerEditModel
-            {
-                OrganizerId = organizer.OrganizerId,
-                Name = organizer.Name,
-                Description = organizer.Description,
-                Image = organizer.Image,
-                Website = organizer.Website,
-                Slug = organizer.Slug,
-                EventCount = organizer.Events.Count(),
-                IsRemovable = !organizer.IsDefault
-            };
-
-            ViewBag.StatusMessage = message;
-            ViewBag.Organizers = organizers;
-
-            return View(model);
-        }
-
-        [HttpPost, ActionName("Organizer")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateOrganizer(Guid id, OrganizerEditModel model)
-        {
-            var organizers =
-                await UnitOfWork.OrganizerRepository.GetUserOrganizersAsync(GetGuid(User.Identity.GetUserId()));
-
-            if (ModelState.IsValid)
-            {
-                var organizer = organizers.FirstOrDefault(o => o.OrganizerId.Equals(id));
-                if (organizer == null)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.NotFound);
-                }
-
-                try
-                {
-                    organizer.Name = model.Name;
-                    organizer.Description = model.Description;
-                    organizer.Image = model.Image ?? PlaceholderImagePath;
-                    organizer.Website = model.Website;
-                    organizer.Slug = model.Slug;
-
-                    if (await IsOrganizerSlugUnique(model.Slug, organizer.OrganizerId))
-                    {
-                        UnitOfWork.OrganizerRepository.Update(organizer);
-                        await UnitOfWork.SaveChangesAsync();
-
-                        return RedirectToAction("Organizer", "Account",
-                            new {id = organizer.OrganizerId, message = "Profil başarıyla güncellendi"});
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("slug", "Url kısaltması özel olmalıdır");
-                    }
-                }
-                catch
-                {
-                    //TODO: Log error
-                    ModelState.AddModelError("", "Organizatör profili güncellenirken bir hata oluştu");
-                }
-            }
-            else
-            {
-                ModelState.AddModelError("", "Lütfen tüm alanları doğru şekilde doldurunuz");
-            }
-
-            ViewBag.Organizers = organizers;
 
             return View(model);
         }
@@ -288,14 +206,99 @@ namespace BiBilet.Web.Controllers
                 //TODO: Log error
             }
 
-            return RedirectToAction("Organizer", "Account", new {id = organizer.OrganizerId});
+            return RedirectToAction("UpdateOrganizer", "Account", new {id = organizer.OrganizerId});
         }
 
         [HttpGet]
-        public async Task<ActionResult> DeleteOrganizer(Guid id)
+        public async Task<ActionResult> UpdateOrganizer(Guid? id, string message)
         {
+            var organizers =
+                await UnitOfWork.OrganizerRepository.GetUserOrganizersAsync(GetGuid(User.Identity.GetUserId()));
+
+            var organizer = id.HasValue
+                ? organizers.FirstOrDefault(o => o.OrganizerId.Equals(id.Value))
+                : organizers.First();
+
+            if (organizer == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            }
+
+            var model = new OrganizerEditModel
+            {
+                OrganizerId = organizer.OrganizerId,
+                Name = organizer.Name,
+                Description = organizer.Description,
+                Image = organizer.Image,
+                Website = organizer.Website,
+                Slug = organizer.Slug,
+                IsRemovable = !organizer.IsDefault
+            };
+
+            ViewBag.StatusMessage = message;
+            ViewBag.Organizers = organizers;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> UpdateOrganizer(OrganizerEditModel model)
+        {
+            var organizers =
+                await UnitOfWork.OrganizerRepository.GetUserOrganizersAsync(GetGuid(User.Identity.GetUserId()));
+
+            if (ModelState.IsValid)
+            {
+                var organizer = organizers.FirstOrDefault(o => o.OrganizerId.Equals(model.OrganizerId));
+                if (organizer == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+                }
+
+                try
+                {
+                    organizer.Name = model.Name;
+                    organizer.Description = model.Description;
+                    organizer.Image = model.Image ?? PlaceholderImagePath;
+                    organizer.Website = model.Website;
+                    organizer.Slug = model.Slug;
+
+                    if (await IsOrganizerSlugUnique(model.Slug, organizer.OrganizerId))
+                    {
+                        UnitOfWork.OrganizerRepository.Update(organizer);
+                        await UnitOfWork.SaveChangesAsync();
+
+                        return RedirectToAction("UpdateOrganizer", "Account",
+                            new {id = organizer.OrganizerId, message = "Profil başarıyla güncellendi"});
+                    }
+                    ModelState.AddModelError("", "Url kısaltması özel olmalıdır");
+                }
+                catch
+                {
+                    //TODO: Log error
+                    ModelState.AddModelError("", "Organizatör profili güncellenirken bir hata oluştu");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Lütfen tüm alanları doğru şekilde doldurunuz");
+            }
+
+            ViewBag.Organizers = organizers;
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> DeleteOrganizer(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
             var organizer =
-                await UnitOfWork.OrganizerRepository.GetUserOrganizerAsync(id, GetGuid(User.Identity.GetUserId()));
+                await UnitOfWork.OrganizerRepository.GetUserOrganizerAsync(id.Value, GetGuid(User.Identity.GetUserId()));
             if (organizer == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound);
@@ -333,16 +336,30 @@ namespace BiBilet.Web.Controllers
 
             try
             {
-                // Delete organizer record from the database
+                foreach (var eventObj in organizer.Events.ToList())
+                {
+                    foreach (var ticket in eventObj.Tickets.ToList())
+                    {
+                        UnitOfWork.TicketRepository.Remove(ticket);
+                    }
+
+                    UnitOfWork.EventRepository.Remove(eventObj);
+
+                    if (eventObj.Image != PlaceholderImagePath)
+                    {
+                        FileUtils.DeleteFile(Server.MapPath(eventObj.Image));
+                    }
+                }
+
                 UnitOfWork.OrganizerRepository.Remove(organizer);
                 await UnitOfWork.SaveChangesAsync();
 
                 if (organizer.Image != PlaceholderImagePath)
                 {
-                    DiskUtils.DeleteDirectory(Server.MapPath(Path.GetDirectoryName(organizer.Image)));
+                    FileUtils.DeleteFile(Server.MapPath(organizer.Image));
                 }
 
-                return RedirectToAction("Organizer", "Account");
+                return RedirectToAction("UpdateOrganizer", "Account");
             }
             catch
             {
@@ -352,37 +369,28 @@ namespace BiBilet.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> UploadOrganizerImage(Guid id)
+        [ValidateAntiForgeryToken]
+        public ActionResult UploadOrganizerImage(int x, int y, int w, int h)
         {
-            var organizer =
-                await UnitOfWork.OrganizerRepository.GetUserOrganizerAsync(id, GetGuid(User.Identity.GetUserId()));
-            if (organizer == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
-            }
-
             try
             {
                 var file = Request.Files[0];
                 if (file != null)
                 {
-                    const string fileName = "organizer-image.jpg";
-
-                    var absolutePath = Server.MapPath(Path.Combine(UploadPath, id.ToString()));
-
+                    var absolutePath = Server.MapPath(Path.Combine(UploadPath));
                     if (!Directory.Exists(absolutePath))
                     {
                         Directory.CreateDirectory(absolutePath);
                     }
 
-                    DiskUtils.SaveImage(file.InputStream, Path.Combine(absolutePath, fileName));
+                    var fileName = FileUtils.GenerateFileName("o", "jpg");
+                    FileUtils.CropSaveImage(file.InputStream, x, y, w, h, Path.Combine(absolutePath, fileName));
 
                     return Json(new
                     {
                         success = true,
-                        path =
-                            VirtualPathUtility.Combine(UploadPath,
-                                string.Format("{0}/{1}?{2}", id, fileName, DateTime.UtcNow.ToBinary()))
+                        path = Path.Combine(UploadPath,
+                            string.Format("{0}?{1}", fileName, DateTime.UtcNow.ToBinary()))
                     });
                 }
 

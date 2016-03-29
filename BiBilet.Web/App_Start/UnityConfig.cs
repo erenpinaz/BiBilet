@@ -44,7 +44,7 @@ namespace BiBilet.Web.App_Start
             // container.RegisterType<IProductRepository, ProductRepository>();
 
             // Register IUnitOfWork (Default Implementation: Entity Framework)
-            container.RegisterType<IUnitOfWork, UnitOfWork>(new HierarchicalLifetimeManager(),
+            container.RegisterType<IUnitOfWork, UnitOfWork>(new PerRequestLifetimeManager(),
                 new InjectionConstructor("BiBiletContext"));
 
             // Register Identity data stores
