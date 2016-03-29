@@ -6,6 +6,8 @@ using System.Web.Mvc;
 
 namespace BiBilet.Web.ViewModels
 {
+    //TODO: Update temporary string length annotations
+
     public class EventEditModel
     {
         public EventEditModel()

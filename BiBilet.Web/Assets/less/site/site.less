@@ -120,6 +120,45 @@
     height: 360px;
 }
 
+.crop-editor {
+    overflow: hidden;
+    padding-top: 50px;
+
+    .cropit-preview {
+        margin: 0 auto;
+
+        .cropit-preview-background {
+            opacity: .2;
+        }
+    }
+
+    .cropit-controls {
+        width: 240px;
+        margin: 0 auto;
+        padding: 20px 0;
+
+        .cropit-image-zoom-input {
+            position: relative;
+            z-index: 10;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .cropit-image-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            opacity: 0;
+        }
+
+        .progress {
+            margin: 0;
+        }
+    }
+}
+
 .events {
     .thumbnail img {
         width: 240px;

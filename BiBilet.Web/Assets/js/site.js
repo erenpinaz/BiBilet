@@ -70,9 +70,11 @@ $(function () {
         });
 
         $cropEditor.cropit({
+            imageBackground: true,
             width: $cropEditor.data("width"),
             height: $cropEditor.data("height"),
             smallImage: "stretch",
+            initialZoom: "image",
             onFileChange: function (e) {
                 var file = e.target.files[0];
 

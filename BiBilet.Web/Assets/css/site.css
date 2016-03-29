@@ -6821,6 +6821,38 @@ button.close {
 #event-image-preview {
   height: 360px;
 }
+.crop-editor {
+  overflow: hidden;
+  padding-top: 50px;
+}
+.crop-editor .cropit-preview {
+  margin: 0 auto;
+}
+.crop-editor .cropit-preview .cropit-preview-background {
+  opacity: .2;
+}
+.crop-editor .cropit-controls {
+  width: 240px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+.crop-editor .cropit-controls .cropit-image-zoom-input {
+  position: relative;
+  z-index: 10;
+  display: block;
+  margin-bottom: 10px;
+}
+.crop-editor .cropit-controls .cropit-image-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+.crop-editor .cropit-controls .progress {
+  margin: 0;
+}
 .events .thumbnail img {
   width: 240px;
 }
