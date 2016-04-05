@@ -12,6 +12,8 @@ namespace BiBilet.Domain.Entities.Application
         public string OwnerName { get; set; }
         public string OwnerEmail { get; set; }
         public string OwnerAddress { get; set; }
+        public string OrderNumber { get; set; }
+        public DateTime OrderDate { get; set; }
 
         #endregion
 

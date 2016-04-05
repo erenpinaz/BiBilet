@@ -26,7 +26,7 @@ namespace BiBilet.Domain.Entities.Application
 
         public virtual Event Event { get; set; }
 
-        public ICollection<UserTicket> UserTickets
+        public virtual ICollection<UserTicket> UserTickets
         {
             get { return _userTickets ?? (_userTickets = new List<UserTicket>()); }
             set { _userTickets = value; }

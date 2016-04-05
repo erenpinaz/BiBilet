@@ -4,100 +4,118 @@
     ViewBag.Title = Model.Title;
 }
 
-<h1 class="page-header">
-    @Model.Title <small class="text-muted">@Model.CategoryName</small>
-</h1>
+<section id="eventDetails">
+    <h1 class="page-header">
+        @Model.Title <small class="text-muted">@Model.CategoryName</small>
+    </h1>
 
-<div class="row">
-    <div class="col-md-4">
-        <img src="@Model.Image" class="img-responsive" alt="Event Image"/>
-    </div>
-    <div class="col-md-6">
-        <div class="event-details">
-            <p>
-                <i class="glyphicon glyphicon-folder-open"></i>
-                <a href="#">@Model.TopicName</a> / <a href="#">@Model.SubTopicName</a>
-            </p>
-            <p>
-                <i class="glyphicon glyphicon-calendar"></i>@Model.Date
-            </p>
-            <p>
-                <i class="glyphicon glyphicon-time"></i>@Model.Time
-            </p>
-            <p>
-                <i class="glyphicon glyphicon-home"></i>@Model.VenueName
-            </p>
-            <p>
-                <i class="glyphicon glyphicon-arrow-right"></i>@Model.VenueAddress
-            </p>
-            <p>
-                <i class="glyphicon glyphicon-user"></i>@Model.OrganizerName
-            </p>
-            <p>
-                @if (Model.IsLive)
-                {
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th>Bilet Başlığı</th>
-                            <th>Kalan</th>
-                            <th>Fiyat</th>
-                            <th>Satın Al/Kayıt Ol</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach (var ticket in Model.Tickets)
-                        {
+    <div class="row">
+        <div class="col-md-4">
+            <img src="@Model.Image" class="img-responsive" alt="Event Image"/>
+        </div>
+        <div class="col-md-6">
+            <div class="event-details">
+                <p>
+                    <i class="glyphicon glyphicon-folder-open"></i>
+                    <a href="#">@Model.TopicName</a> / <a href="#">@Model.SubTopicName</a>
+                </p>
+                <p>
+                    <i class="glyphicon glyphicon-calendar"></i>@Model.Date
+                </p>
+                <p>
+                    <i class="glyphicon glyphicon-time"></i>@Model.Time
+                </p>
+                <p>
+                    <i class="glyphicon glyphicon-home"></i>@Model.VenueName
+                </p>
+                <p>
+                    <i class="glyphicon glyphicon-arrow-right"></i>@Model.VenueAddress
+                </p>
+                <p>
+                    <i class="glyphicon glyphicon-user"></i>@Model.OrganizerName
+                </p>
+                <p>
+                    @if (Model.IsLive)
+                    {
+                        <table class="table table-hover">
+                            <thead>
                             <tr>
-                                <td>@ticket.Title</td>
-                                <td>
-                                    @((ticket.Quantity <= 0) ? "Tükenmiş" : ticket.Quantity.ToString())
-                                </td>
-                                @if (ticket.Price > 0 && ticket.Quantity > 0)
-                                {
-                                    <td>@ticket.Price</td>
-                                    <td>
-                                        <a href="#" class="btn btn-xs btn-default">
-                                            <i class="glyphicon glyphicon-shopping-cart"></i>Satın Al
-                                        </a>
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td>Bedava</td>
-                                    <td>
-                                        @if (ticket.Quantity > 0)
-                                        {
-                                            <a href="@Url.Action("BuyTicket", "Ticket", new {id = ticket.TicketId})"
-                                               class="btn btn-xs btn-default">
-                                                <i class="glyphicon glyphicon-plus"></i>Kayıt Ol
-                                            </a>
-                                        }
-                                        else
-                                        {
-                                            <span>N/A</span>
-                                        }
-                                    </td>
-                                }
+                                <th>Bilet Başlığı</th>
+                                <th>Kalan</th>
+                                <th>Fiyat</th>
+                                <th>Satın Al/Kayıt Ol</th>
                             </tr>
-                        }
-                        </tbody>
-                    </table>
-                    <a href="#" class="btn btn-info" data-toggle="modal"><i class="glyphicon glyphicon-send"></i>İletişim</a>
-                }
-                else
-                {
-                    <span><i class="glyphicon glyphicon-hand-right"></i>Bu etkinliğin süresi dolmuş</span>
-                }
-            </p>
+                            </thead>
+                            <tbody>
+                            @foreach (var ticket in Model.Tickets)
+                            {
+                                <tr>
+                                    <td>@ticket.Title</td>
+                                    <td>
+                                        @ticket.Quantity
+                                    </td>
+                                    @if (ticket.IsPaid)
+                                    {
+                                        <td>@ticket.Price</td>
+                                        <td>
+                                            @if (ticket.IsAvailable)
+                                            {
+                                                <button class="btn btn-xs btn-default disabled" data-toggle="modal" data-target="#getTicketModal"
+                                                        data-url="@Url.Action("Buy", "Ticket", new {id = ticket.TicketId})">
+                                                    <i class="glyphicon glyphicon-plus"></i>Satın Al
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <span>-</span>
+                                            }
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>@ticket.Type</td>
+                                        <td>
+                                            @if (ticket.IsAvailable)
+                                            {
+                                                <button class="btn btn-xs btn-default" data-toggle="modal" data-target="#getTicketModal"
+                                                        data-url="@Url.Action("Register", "Ticket", new {id = ticket.TicketId})">
+                                                    <i class="glyphicon glyphicon-plus"></i>Kayıt Ol
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <span>-</span>
+                                            }
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                        <button class="btn btn-info" data-toggle="modal"><i class="glyphicon glyphicon-send"></i>İletişim</button>
+                    }
+                    else
+                    {
+                        <span><i class="glyphicon glyphicon-hand-right"></i>Bu etkinliğin süresi dolmuş</span>
+                    }
+                </p>
+            </div>
         </div>
     </div>
-</div>
 
-<h3 class="page-header">Etkinlik Açıklaması</h3>
+    <h3 class="page-header">Etkinlik Açıklaması</h3>
 
-<div class="row">
-    <div class="col-md-12">
-        @Html.Raw(Model.Description)
+    <div class="row">
+        <div class="col-md-12">
+            @Html.Raw(Model.Description)
+        </div>
     </div>
-</div>
+
+    <!-- Get Ticket Modal -->
+    <div class="modal fade" id="getTicketModal" tabindex="-1" role="dialog" aria-labelledby="getTicketLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+</section>

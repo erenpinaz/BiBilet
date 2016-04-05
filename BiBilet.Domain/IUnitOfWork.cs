@@ -23,10 +23,11 @@ namespace BiBilet.Domain
         // Application
         IEventRepository EventRepository { get; }
         IOrganizerRepository OrganizerRepository { get; }
-        IRepository<Ticket> TicketRepository { get; }
-        IRepository<Category> CategoryRepository { get; }
+        ITicketRepository TicketRepository { get; }
+        ICategoryRepository CategoryRepository { get; }
         IRepository<Topic> TopicRepository { get; }
         ISubTopicRepository SubTopicRepository { get; }
+        IUserTicketRepository UserTicketRepository { get; }
 
         #endregion
 

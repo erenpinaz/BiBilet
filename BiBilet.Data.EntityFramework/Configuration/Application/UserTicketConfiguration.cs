@@ -1,4 +1,6 @@
-﻿using System.Data.Entity.ModelConfiguration;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity.Infrastructure.Annotations;
+using System.Data.Entity.ModelConfiguration;
 using BiBilet.Domain.Entities.Application;
 
 namespace BiBilet.Data.EntityFramework.Configuration.Application
@@ -34,6 +36,19 @@ namespace BiBilet.Data.EntityFramework.Configuration.Application
                 .HasColumnName("OwnerEmail")
                 .HasColumnType("nvarchar")
                 .HasMaxLength(320)
+                .IsRequired();
+
+            Property(x => x.OrderNumber)
+                .HasColumnName("OrderNumber")
+                .HasColumnType("nvarchar")
+                .HasMaxLength(128)
+                .HasColumnAnnotation(IndexAnnotation.AnnotationName,
+                    new IndexAnnotation(new IndexAttribute("IX_OrderNumber") {IsUnique = true}))
+                .IsRequired();
+
+            Property(x => x.OrderDate)
+                .HasColumnName("OrderDate")
+                .HasColumnType("datetime2")
                 .IsRequired();
 
             HasRequired(x => x.User)

@@ -58,6 +58,7 @@ namespace BiBilet.Data.EntityFramework
                     _categoryRepository = null;
                     _topicRepository = null;
                     _subTopicRepository = null;
+                    _userTicketRepository = null;
 
                     // Database Context
                     _context.Dispose();
@@ -87,10 +88,11 @@ namespace BiBilet.Data.EntityFramework
         // Application
         private IEventRepository _eventRepository;
         private IOrganizerRepository _organizerRepository;
-        private IRepository<Ticket> _ticketRepository;
-        private IRepository<Category> _categoryRepository;
+        private ITicketRepository _ticketRepository;
+        private ICategoryRepository _categoryRepository;
         private IRepository<Topic> _topicRepository;
         private ISubTopicRepository _subTopicRepository;
+        private IUserTicketRepository _userTicketRepository;
 
         #endregion
 
@@ -111,17 +113,20 @@ namespace BiBilet.Data.EntityFramework
         public IOrganizerRepository OrganizerRepository
             => _organizerRepository ?? (_organizerRepository = new OrganizerRepository(_context));
 
-        public IRepository<Ticket> TicketRepository
-            => _ticketRepository ?? (_ticketRepository = new Repository<Ticket>(_context));
+        public ITicketRepository TicketRepository
+            => _ticketRepository ?? (_ticketRepository = new TicketRepository(_context));
 
-        public IRepository<Category> CategoryRepository
-            => _categoryRepository ?? (_categoryRepository = new Repository<Category>(_context));
+        public ICategoryRepository CategoryRepository
+            => _categoryRepository ?? (_categoryRepository = new CategoryRepository(_context));
 
         public IRepository<Topic> TopicRepository
             => _topicRepository ?? (_topicRepository = new Repository<Topic>(_context));
 
         public ISubTopicRepository SubTopicRepository
             => _subTopicRepository ?? (_subTopicRepository = new SubTopicRepository(_context));
+
+        public IUserTicketRepository UserTicketRepository
+            => _userTicketRepository ?? (_userTicketRepository = new UserTicketRepository(_context));
 
         /// <summary>
         /// Saves changes that are made in the current context

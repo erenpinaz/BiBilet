@@ -17,8 +17,8 @@ namespace BiBilet.Web.Controllers
         [HttpGet]
         public async Task<ActionResult> Index()
         {
-            var events = await UnitOfWork.EventRepository.GetEventsAsync();
-            var categories = await UnitOfWork.CategoryRepository.GetAllAsync();
+            var categories = await UnitOfWork.CategoryRepository.GetCategoriesWithEventsAsync();
+            var events = categories.SelectMany(c => c.Events).ToList();
 
             var model = new HomeViewModel
             {

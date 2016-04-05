@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using System.Linq;
 using BiBilet.Domain.Entities.Application;
 using BiBilet.Domain.Entities.Identity;
 
 namespace BiBilet.Data.EntityFramework
 {
-    internal class BiBiletDbInitializer : CreateDatabaseIfNotExists<BiBiletContext>
+    internal class BiBiletDbInitializer : DropCreateDatabaseIfModelChanges<BiBiletContext>
     {
         /// <summary>
         /// Seeds the database with data
@@ -16,7 +15,7 @@ namespace BiBilet.Data.EntityFramework
         /// <param name="context"></param>
         protected override void Seed(BiBiletContext context)
         {
-            var user = new User()
+            var user = new User
             {
                 UserId = Guid.NewGuid(),
                 UserName = "testioruserfindel",
@@ -24,9 +23,9 @@ namespace BiBilet.Data.EntityFramework
                 Email = "testior@userfindel.com",
                 PasswordHash = "AOgkKfvdMQGT6Hf7iG5Hl/rz6dPh2r09CxOq2+rtcwsUZbtf0a9CpzR1b14QsqzoCg==",
                 SecurityStamp = "cebd32cf-0315-4e28-a8f4-30129bdfc952",
-                Organizers = new List<Organizer>()
+                Organizers = new List<Organizer>
                 {
-                    new Organizer()
+                    new Organizer
                     {
                         OrganizerId = Guid.NewGuid(),
                         Name = "Testior Userfindel",
@@ -40,7 +39,7 @@ namespace BiBilet.Data.EntityFramework
             };
 
             context.Users.Add(user);
-            context.SaveChangesAsync();
+            context.SaveChanges();
 
             var categories = new List<Category>
             {
@@ -71,7 +70,7 @@ namespace BiBilet.Data.EntityFramework
                 new Category {CategoryId = Guid.NewGuid(), Name = "Diğer", Slug = "diger"}
             };
 
-            categories.ForEach(c => context.Categories.AddOrUpdate(p => p.CategoryId, c));
+            categories.ForEach(c => context.Categories.Add(c));
             context.SaveChanges();
 
             var topics = new List<Topic>
@@ -97,7 +96,7 @@ namespace BiBilet.Data.EntityFramework
                 new Topic {TopicId = Guid.NewGuid(), Name = "Diğer"}
             };
 
-            topics.ForEach(t => context.Topics.AddOrUpdate(p => p.TopicId, t));
+            topics.ForEach(t => context.Topics.Add(t));
             context.SaveChanges();
 
             var subtopics = new List<SubTopic>
@@ -255,7 +254,7 @@ namespace BiBilet.Data.EntityFramework
                 new SubTopic {SubTopicId = Guid.NewGuid(), Name = "Diğer", Topic = topics[18]}
             };
 
-            subtopics.ForEach(s => context.SubTopics.AddOrUpdate(p => p.SubTopicId, s));
+            subtopics.ForEach(s => context.SubTopics.Add(s));
             context.SaveChanges();
 
             var venues = new List<Venue>
@@ -270,7 +269,7 @@ namespace BiBilet.Data.EntityFramework
                 }
             };
 
-            venues.ForEach(v => context.Venues.AddOrUpdate(p => p.VenueId, v));
+            venues.ForEach(v => context.Venues.Add(v));
             context.SaveChanges();
 
             var events = new List<Event>
@@ -288,8 +287,8 @@ namespace BiBilet.Data.EntityFramework
                     SubTopic = subtopics[0],
                     Organizer = user.Organizers.ElementAt(0),
                     Venue = venues[0],
-                    StartDate = DateTime.Parse("2016-03-15 9:00"),
-                    EndDate = DateTime.Parse("2016-03-17 15:00")
+                    StartDate = DateTime.Parse("2016-05-15 9:00"),
+                    EndDate = DateTime.Parse("2016-05-17 15:00")
                 },
                 new Event
                 {
@@ -306,21 +305,23 @@ namespace BiBilet.Data.EntityFramework
                     Venue = venues[0],
                     StartDate = DateTime.Parse("2016-06-1 9:00"),
                     EndDate = DateTime.Parse("2016-06-2 15:00"),
-                    Tickets = new List<Ticket>()
+                    Tickets = new List<Ticket>
                     {
-                        new Ticket()
+                        new Ticket
                         {
                             TicketId = Guid.NewGuid(),
                             Title = "Free",
                             Quantity = 100,
-                            Price = 0
+                            Price = 0,
+                            Type = TicketType.Free
                         },
-                        new Ticket()
+                        new Ticket
                         {
                             TicketId = Guid.NewGuid(),
                             Title = "VIP",
                             Quantity = 10,
-                            Price = 15.0M
+                            Price = 15.0M,
+                            Type = TicketType.Paid
                         }
                     }
                 },
@@ -465,8 +466,8 @@ namespace BiBilet.Data.EntityFramework
                     SubTopic = subtopics[0],
                     Organizer = user.Organizers.ElementAt(0),
                     Venue = venues[0],
-                    StartDate = DateTime.Parse("2016-10-5 9:00"),
-                    EndDate = DateTime.Parse("2016-10-8 15:00")
+                    StartDate = DateTime.Parse("2016-3-5 9:00"),
+                    EndDate = DateTime.Parse("2016-3-5 15:00")
                 },
                 new Event
                 {
@@ -481,12 +482,12 @@ namespace BiBilet.Data.EntityFramework
                     SubTopic = subtopics[0],
                     Organizer = user.Organizers.ElementAt(0),
                     Venue = venues[0],
-                    StartDate = DateTime.Parse("2016-11-8 9:00"),
-                    EndDate = DateTime.Parse("2016-11-13 15:00")
+                    StartDate = DateTime.Parse("2016-3-8 9:00"),
+                    EndDate = DateTime.Parse("2016-3-8 15:00")
                 }
             };
 
-            events.ForEach(e => context.Events.AddOrUpdate(p => p.Title, e));
+            events.ForEach(e => context.Events.Add(e));
             context.SaveChanges();
 
             base.Seed(context);

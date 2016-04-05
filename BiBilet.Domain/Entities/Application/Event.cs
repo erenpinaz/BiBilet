@@ -14,11 +14,11 @@ namespace BiBilet.Domain.Entities.Application
         #region Scalar Properties
 
         public Guid EventId { get; set; }
-        public Guid OrganizerId { get; set; }
-        public Guid CategoryId { get; set; }
-        public Guid TopicId { get; set; }
-        public Guid SubTopicId { get; set; }
-        public Guid VenueId { get; set; }
+        public virtual Guid OrganizerId { get; set; }
+        public virtual Guid CategoryId { get; set; }
+        public virtual Guid TopicId { get; set; }
+        public virtual Guid SubTopicId { get; set; }
+        public virtual Guid VenueId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public string Image { get; set; }

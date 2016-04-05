@@ -4,52 +4,56 @@
     ViewBag.Title = "Giriş Yap";
 }
 
-<div class="row">
-    <div class="col-xs-offset-2 col-xs-8 col-sm-offset-4 col-sm-4">
-        <section id="loginForm">
-            @using (Html.BeginForm("Login", "Account", new {ReturnUrl = ViewBag.ReturnUrl}, FormMethod.Post, new {@class = "form-horizontal", role = "form"}))
-            {
-                @Html.AntiForgeryToken()
+<section id="accountLogin">
+    <h1 class="page-header">
+        @ViewBag.Title
+    </h1>
 
-                <h1 class="page-header">@ViewBag.Title</h1>
+    <div class="row">
+        <div class="col-xs-offset-2 col-xs-8 col-sm-offset-4 col-sm-4">
+            <section id="loginForm">
+                @using (Html.BeginForm("Login", "Account", new {ReturnUrl = ViewBag.ReturnUrl}, FormMethod.Post, new {@class = "form-horizontal", role = "form"}))
+                {
+                    @Html.AntiForgeryToken()
 
-                @Html.ValidationSummary(true)
+                    @Html.ValidationSummary(true)
 
-                <div class="form-group">
-                    <div class="col-md-12">
-                        @Html.TextBoxFor(m => m.UserName, new {@class = "form-control", placeholder = Html.DisplayPlaceholderFor(m => m.UserName)})
-                        @Html.ValidationMessageFor(m => m.UserName)
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-12">
-                        @Html.PasswordFor(m => m.Password, new {@class = "form-control", placeholder = Html.DisplayPlaceholderFor(m => m.Password)})
-                        @Html.ValidationMessageFor(m => m.Password)
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-12">
-                        <div class="checkbox">
-                            <label>
-                                @Html.CheckBoxFor(m => m.RememberMe)
-                                @Html.DisplayNameFor(m => m.RememberMe)
-                            </label>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.UserName, new {@class = "form-control", placeholder = Html.DisplayPlaceholderFor(m => m.UserName)})
+                            @Html.ValidationMessageFor(m => m.UserName)
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-12">
-                        <input type="submit" class="btn btn-default" value="Giriş yap"/>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.PasswordFor(m => m.Password, new {@class = "form-control", placeholder = Html.DisplayPlaceholderFor(m => m.Password)})
+                            @Html.ValidationMessageFor(m => m.Password)
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-12">
-                        <p>
-                            Hesabın yok mu? Hemen bir <a href="@Url.Action("Register", "Account")">hesap oluştur.</a>
-                        </p>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <div class="checkbox">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.RememberMe)
+                                    @Html.DisplayNameFor(m => m.RememberMe)
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            }
-        </section>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <input type="submit" class="btn btn-default" value="Giriş yap"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <p>
+                                Hesabın yok mu? Hemen bir <a href="@Url.Action("Register", "Account")">hesap oluştur.</a>
+                            </p>
+                        </div>
+                    </div>
+                }
+            </section>
+        </div>
     </div>
-</div>
+</section>

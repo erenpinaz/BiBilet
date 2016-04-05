@@ -26,27 +26,27 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// <summary>
         /// Returns a list of published events
         /// </summary>
-        /// <param name="userId"></param>
         /// <returns>List of published <see cref="Event"/></returns>
-        public virtual List<Event> GetEvents(Guid? userId)
+        public virtual List<Event> GetEvents()
         {
-            var events = userId.HasValue
-                ? Set.Where(e => e.Published && e.Organizer.UserId == userId)
-                : Set.Where(e => e.Published);
-            return events.ToList();
+            return Set
+                .Include(e => e.Venue)
+                .Include(e => e.Topic)
+                .Include(e => e.SubTopic)
+                .Where(e => e.Published).ToList();
         }
 
         /// <summary>
         /// Asynchronously returns a list of published events
         /// </summary>
-        /// <param name="userId"></param>
         /// <returns>List of published <see cref="Event"/></returns>
-        public virtual Task<List<Event>> GetEventsAsync(Guid? userId)
+        public virtual Task<List<Event>> GetEventsAsync()
         {
-            var events = userId.HasValue
-                ? Set.Where(e => e.Published && e.Organizer.UserId == userId)
-                : Set.Where(e => e.Published);
-            return events.ToListAsync();
+            return Set
+                .Include(e => e.Venue)
+                .Include(e => e.Topic)
+                .Include(e => e.SubTopic)
+                .Where(e => e.Published).ToListAsync();
         }
 
         /// <summary>
@@ -54,14 +54,14 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// with cancellation support
         /// </summary>
         /// <param name="cancellationToken"></param>
-        /// <param name="userId"></param>
         /// <returns>List of published <see cref="Event"/></returns>
-        public virtual Task<List<Event>> GetEventsAsync(CancellationToken cancellationToken, Guid? userId)
+        public virtual Task<List<Event>> GetEventsAsync(CancellationToken cancellationToken)
         {
-            var events = userId.HasValue
-                ? Set.Where(e => e.Published && e.Organizer.UserId == userId)
-                : Set.Where(e => e.Published);
-            return events.ToListAsync(cancellationToken);
+            return Set
+                .Include(e => e.Venue)
+                .Include(e => e.Topic)
+                .Include(e => e.SubTopic)
+                .Where(e => e.Published).ToListAsync(cancellationToken);
         }
 
         /// <summary>
@@ -71,7 +71,14 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// <returns>A published <see cref="Event"/></returns>
         public virtual Event GetEvent(string slug)
         {
-            return Set.FirstOrDefault(e => e.Slug.Equals(slug) && e.Published);
+            return Set
+                .Include(e => e.Organizer)
+                .Include(e => e.Venue)
+                .Include(e => e.Category)
+                .Include(e => e.Topic)
+                .Include(e => e.SubTopic)
+                .Include(e => e.Tickets.Select(t => t.UserTickets))
+                .FirstOrDefault(e => e.Slug.Equals(slug) && e.Published);
         }
 
         /// <summary>
@@ -81,7 +88,14 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// <returns>A published <see cref="Event"/></returns>
         public virtual Task<Event> GetEventAsync(string slug)
         {
-            return Set.FirstOrDefaultAsync(e => e.Slug.Equals(slug) && e.Published);
+            return Set
+                .Include(e => e.Organizer)
+                .Include(e => e.Venue)
+                .Include(e => e.Category)
+                .Include(e => e.Topic)
+                .Include(e => e.SubTopic)
+                .Include(e => e.Tickets.Select(t => t.UserTickets))
+                .FirstOrDefaultAsync(e => e.Slug.Equals(slug) && e.Published);
         }
 
         /// <summary>
@@ -92,7 +106,14 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// <returns>A published <see cref="Event"/></returns>
         public virtual Task<Event> GetEventAsync(string slug, CancellationToken cancellationToken)
         {
-            return Set.FirstOrDefaultAsync(e => e.Slug.Equals(slug) && e.Published, cancellationToken);
+            return Set
+                .Include(e => e.Organizer)
+                .Include(e => e.Venue)
+                .Include(e => e.Category)
+                .Include(e => e.Topic)
+                .Include(e => e.SubTopic)
+                .Include(e => e.Tickets.Select(t => t.UserTickets))
+                .FirstOrDefaultAsync(e => e.Slug.Equals(slug) && e.Published, cancellationToken);
         }
 
         /// <summary>
@@ -103,7 +124,14 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// <returns>An <see cref="Event" /></returns>
         public virtual Event GetUserEvent(Guid id, Guid userId)
         {
-            return Set.FirstOrDefault(e => e.EventId == id && e.Organizer.UserId == userId);
+            return Set
+                .Include(e => e.Organizer)
+                .Include(e => e.Venue)
+                .Include(e => e.Category)
+                .Include(e => e.Topic)
+                .Include(e => e.SubTopic)
+                .Include(e => e.Tickets.Select(t => t.UserTickets))
+                .FirstOrDefault(e => e.EventId == id && e.Organizer.UserId == userId);
         }
 
         /// <summary>
@@ -114,7 +142,14 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// <returns>An <see cref="Event" /></returns>
         public virtual Task<Event> GetUserEventAsync(Guid id, Guid userId)
         {
-            return Set.FirstOrDefaultAsync(e => e.EventId == id && e.Organizer.UserId == userId);
+            return Set
+                .Include(e => e.Organizer)
+                .Include(e => e.Venue)
+                .Include(e => e.Category)
+                .Include(e => e.Topic)
+                .Include(e => e.SubTopic)
+                .Include(e => e.Tickets.Select(t => t.UserTickets))
+                .FirstOrDefaultAsync(e => e.EventId == id && e.Organizer.UserId == userId);
         }
 
         /// <summary>
@@ -127,7 +162,14 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// <returns>An <see cref="Event" /></returns>
         public virtual Task<Event> GetUserEventAsync(Guid id, Guid userId, CancellationToken cancellationToken)
         {
-            return Set.FirstOrDefaultAsync(e => e.EventId == id && e.Organizer.UserId == userId, cancellationToken);
+            return Set
+                .Include(e => e.Organizer)
+                .Include(e => e.Venue)
+                .Include(e => e.Category)
+                .Include(e => e.Topic)
+                .Include(e => e.SubTopic)
+                .Include(e => e.Tickets.Select(t => t.UserTickets))
+                .FirstOrDefaultAsync(e => e.EventId == id && e.Organizer.UserId == userId, cancellationToken);
         }
     }
 }

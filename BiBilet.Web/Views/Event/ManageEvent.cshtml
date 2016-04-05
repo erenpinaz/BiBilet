@@ -1,0 +1,88 @@
+﻿@model BiBilet.Web.ViewModels.ManageEventViewModel
+
+@{
+    ViewBag.Title = "Yönetim: " + Model.Title;
+}
+
+<section id="manageEvent">
+    <h1 class="page-header">
+        @ViewBag.Title
+    </h1>
+
+    <div class="row">
+        <div class="col-md-2 sidebar">
+            <div class="table-responsive">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                        <tr>
+                            <th>Toplam Bilet</th>
+                            <th>@Model.TotalTickets</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Bedava bilet</td>
+                            <td>@Model.TotalFreeTickets</td>
+                        </tr>
+                        <tr>
+                            <td>Ücretli bilet</td>
+                            <td>@Model.TotalPaidTickets</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                    <tr>
+                        <th>Satılan Bilet</th>
+                        <th>@Model.TotalSold</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Bedava bilet</td>
+                        <td>@Model.TotalFreeSold</td>
+                    </tr>
+                    <tr>
+                        <td>Ücretli bilet</td>
+                        <td>@Model.TotalPaidSold</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-10 main">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <table id="attendees-table"
+                           data-toggle="table"
+                           data-locale="tr-TR"
+                           data-url="@Url.Action("PopulateAttendees", "Event", new {id = Model.EventId})"
+                           data-cache="false"
+                           data-cookie="true"
+                           data-cookie-id-table="attendees-table-cookie"
+                           data-height="500"
+                           data-pagination="true"
+                           data-page-size="10"
+                           data-page-list="[10, 20, 50]"
+                           data-search="true"
+                           data-show-columns="true"
+                           data-show-refresh="true">
+                        <thead>
+                        <tr>
+                            <th data-field="name">Ad Soyad</th>
+                            <th data-field="email">E-posta</th>
+                            <th data-field="address">Adres</th>
+                            <th data-field="tickettitle">Bilet Başlığı</th>
+                            <th data-field="tickettype">Bilet Türü</th>
+                            <th data-field="ordernumber">İşlem No.</th>
+                            <th data-field="orderdate" data-formatter="jsonDateFormatter">İşlem Tarihi</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

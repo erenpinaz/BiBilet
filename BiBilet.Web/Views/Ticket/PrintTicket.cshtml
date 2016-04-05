@@ -1,0 +1,80 @@
+﻿@model BiBilet.Web.ViewModels.UserTicketViewModel
+
+@{
+    ViewBag.Title = "Bileti Yazdır";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+
+    <style type="text/css">
+        body {
+            font-family: Tahoma;
+            color: #333333;
+        }
+
+        #printTicket {
+            display: table;
+            border: 3px solid #dddddd;
+        }
+
+        #printTicket .ticket-info {
+            display: table-cell;
+            height: 300px;
+            padding: 1em;
+        }
+
+        #printTicket .ticket-info h1 small { font-weight: normal; }
+
+        #printTicket .order-info {
+            display: table-cell;
+            background-color: #faf5ed;
+            height: 300px;
+            text-align: center;
+            vertical-align: middle;
+            border-left: 3px dashed #ddd;
+            padding: 1em;
+        }
+
+        #printTicket .order-info .info-rotate {
+            -webkit-transform: rotate(90deg);
+            -moz-transform: rotate(90deg);
+            -o-transform: rotate(90deg);
+            -ms-transform: rotate(90deg);
+            transform: rotate(90deg);
+        }
+    </style>
+</head>
+<body>
+<section id="printTicket">
+    <div class="ticket">
+        <div class="ticket-info">
+            <h1>
+                @Model.EventTitle <br/>
+                <small>@Model.EventStartDate</small>
+            </h1>
+            <p>@Model.EventAddress</p>
+            <h3>
+                Bilet: @Model.TicketTitle
+            </h3>
+            <p>
+                Bu <b>@Model.TicketType</b> bilet <b>@Model.Name</b> tarafından
+                <b>@Model.OrderDate</b> tarihinde <b>@Model.OrderNumber</b> işlem numarası ile satın alınmıştır.
+            </p>
+        </div>
+        <div class="order-info">
+            <div class="info-rotate">
+                @Model.OrderNumber
+                @Model.OrderDate
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

@@ -4,35 +4,39 @@
     ViewBag.Title = "Profili Sil";
 }
 
-<div class="row">
-    <div class="col-md-offset-2 col-md-8">
-        <h1 class="page-header">@ViewBag.Title</h1>
+<section id="deleteOrganizer">
+    <h1 class="page-header">
+        @ViewBag.Title
+    </h1>
 
-        <div class="panel panel-default" id="organizerForm">
-            <div class="panel-body">
+    <div class="row">
+        <div class="col-md-offset-2 col-md-8">
+            <div class="panel panel-default" id="organizerForm">
+                <div class="panel-body">
 
-                <div class="alert alert-info">
-                    Profilinizi silmeden önce katılımıcılarınızı uyarmanız ve varsa satın alınmış olan
-                    etkinlik biletlerini iade etmeniz önerilir.
+                    <div class="alert alert-info">
+                        Profilinizi silmeden önce katılımıcılarınızı uyarmanız ve varsa satın alınmış olan
+                        etkinlik biletlerini iade etmeniz önerilir.
+                    </div>
+
+                    <div class="alert alert-danger">
+                        <b>Dikkat:</b> Bu organizatör tarafından gerçekleştirilen
+                        <b>Tüm etkinlikler ve bu etkinliklere ait tüm biletler silinecektir!</b>
+                    </div>
+
+                    <p class="lead">
+                        <b>@Model.Name</b> isimli profili silmek istediğinizden emin misiniz?
+                    </p>
+
+                    @using (Html.BeginForm("DeleteOrganizer", "Account", new {id = Model.OrganizerId}, FormMethod.Post, new {role = "form"}))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <button type="submit" class="btn btn-primary">Onayla</button>
+                        <a href="@Url.Action("UpdateOrganizer", "Account")" class="btn btn-default">İptal</a>
+                    }
                 </div>
-
-                <div class="alert alert-danger">
-                    <b>Dikkat:</b> Bu organizatör tarafından gerçekleştirilen
-                    <b>Tüm etkinlikler ve bu etkinliklere ait tüm biletler silinecektir!</b>
-                </div>
-
-                <p class="lead">
-                    <b>@Model.Name</b> isimli profili silmek istediğinizden emin misiniz?
-                </p>
-
-                @using (Html.BeginForm("DeleteOrganizer", "Account", new {id = Model.OrganizerId}, FormMethod.Post, new {role = "form"}))
-                {
-                    @Html.AntiForgeryToken()
-
-                    <button type="submit" class="btn btn-primary">Onayla</button>
-                    <a href="@Url.Action("UpdateOrganizer", "Account")" class="btn btn-default">İptal</a>
-                }
             </div>
         </div>
     </div>
-</div>
+</section>

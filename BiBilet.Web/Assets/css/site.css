@@ -6779,6 +6779,7 @@ button.close {
 }
 .content {
   padding: 20px;
+  min-height: 680px;
 }
 .categories .thumbnail {
   position: relative;
@@ -6859,4 +6860,37 @@ button.close {
 .events i.glyphicon,
 .event-details i.glyphicon {
   margin-right: 8px;
+}
+#userTickets .ticket-orders .ticket-order-card {
+  position: relative;
+}
+#userTickets .ticket-orders .ticket-order-card > a {
+  overflow: hidden;
+  zoom: 1;
+  color: #333;
+  background-color: #f5f5f5;
+  box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
+  display: block;
+  padding: 10px;
+  margin-top: 10px;
+  text-decoration: none;
+}
+#userTickets .ticket-orders .ticket-order-card > a:hover {
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.25);
+}
+#userTickets .ticket-orders .ticket-order-card > a .ticket-event-image {
+  width: 120px;
+  margin-right: 10px;
+  float: left;
+}
+#userTickets .ticket-orders .ticket-order-card > a .ticket-event-info h3 {
+  margin: 0;
+}
+#userTickets .ticket-orders .ticket-order-card > a .ticket-order-info {
+  color: #777777;
+}
+#userTickets .ticket-orders .ticket-order-card .ticket-operations {
+  position: absolute;
+  top: 20px;
+  right: 25px;
 }

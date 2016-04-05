@@ -14,25 +14,22 @@ namespace BiBilet.Domain.Repositories.Application
         /// <summary>
         /// Returns a list of published events
         /// </summary>
-        /// <param name="userId"></param>
         /// <returns>List of published <see cref="Event"/></returns>
-        List<Event> GetEvents(Guid? userId = null);
+        List<Event> GetEvents();
 
         /// <summary>
         /// Asynchronously returns a list of published events
         /// </summary>
-        /// <param name="userId"></param>
         /// <returns>List of published <see cref="Event"/></returns>
-        Task<List<Event>> GetEventsAsync(Guid? userId = null);
+        Task<List<Event>> GetEventsAsync();
 
         /// <summary>
         /// Asynchronously returns a list of published events
         /// with cancellation support
         /// </summary>
         /// <param name="cancellationToken"></param>
-        /// <param name="userId"></param>
         /// <returns>List of published <see cref="Event"/></returns>
-        Task<List<Event>> GetEventsAsync(CancellationToken cancellationToken, Guid? userId = null);
+        Task<List<Event>> GetEventsAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Returns single published event

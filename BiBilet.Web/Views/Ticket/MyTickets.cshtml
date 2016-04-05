@@ -1,0 +1,39 @@
+﻿@model IEnumerable<BiBilet.Web.ViewModels.UserTicketViewModel>
+
+@{
+    ViewBag.Title = "Biletlerim";
+}
+
+<section id="userTickets">
+    <h1 class="page-header">
+        @ViewBag.Title
+    </h1>
+
+    <div class="ticket-orders">
+        <div class="row">
+            @foreach (var userTicket in Model)
+            {
+                <div class="ticket-order-card col-md-6">
+                    <a href="#">
+                        <img src="@userTicket.EventImage" class="ticket-event-image" alt="Event Image"/>
+                        <div class="ticket-event-info">
+                            <h3>@userTicket.EventTitle</h3>
+                            @userTicket.EventStartDate
+                        </div>
+                        <hr/>
+                        <div class="ticket-order-info">
+                            @userTicket.TicketTitle <br/>
+                            @userTicket.Name (@userTicket.Email) <br/>
+                            <small><b>@userTicket.TicketType</b>#@userTicket.OrderNumber (@userTicket.OrderDate)</small>
+                        </div>
+                    </a>
+                    <div class="ticket-operations">
+                        <a href="@Url.Action("PrintTicket", "Ticket", new {ordernumber = userTicket.OrderNumber})" class="btn btn-xs btn-primary">
+                            <i class="glyphicon glyphicon-print"></i>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

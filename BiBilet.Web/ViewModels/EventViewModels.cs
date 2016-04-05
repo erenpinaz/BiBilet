@@ -6,13 +6,13 @@ using System.Web.Mvc;
 
 namespace BiBilet.Web.ViewModels
 {
-    //TODO: Update temporary string length annotations
+    //TODO: Add more data annotations
 
     public class EventEditModel
     {
         public EventEditModel()
         {
-            Tickets = new List<TicketViewModel>();
+            Tickets = new List<TicketEditModel>();
         }
 
         public SelectList Organizers { get; set; }
@@ -37,8 +37,6 @@ namespace BiBilet.Web.ViewModels
         public Guid SubTopicId { get; set; }
 
         [Required]
-        [StringLength(128, MinimumLength = 3)]
-        [DataType(DataType.Text)]
         [Display(Name = "Başlık")]
         public string Title { get; set; }
 
@@ -49,13 +47,10 @@ namespace BiBilet.Web.ViewModels
         public string Description { get; set; }
 
         [Required]
-        [DataType(DataType.ImageUrl)]
         [Display(Name = "Resim")]
         public string Image { get; set; }
 
         [Required]
-        [StringLength(128, MinimumLength = 3)]
-        [DataType(DataType.Text)]
         [Display(Name = "Url Kısaltması")]
         public string Slug { get; set; }
 
@@ -63,42 +58,32 @@ namespace BiBilet.Web.ViewModels
         public bool Published { get; set; }
 
         [Required]
-        [DataType(DataType.DateTime)]
         [Display(Name = "Başlangıç")]
         public DateTime StartDate { get; set; }
 
         [Required]
-        [DataType(DataType.DateTime)]
         [Display(Name = "Bitiş")]
         public DateTime EndDate { get; set; }
 
         [Required]
-        [StringLength(128, MinimumLength = 3)]
-        [DataType(DataType.Text)]
         [Display(Name = "İsim")]
         public string VenueName { get; set; }
 
         [Required]
-        [StringLength(128, MinimumLength = 3)]
-        [DataType(DataType.Text)]
         [Display(Name = "Adres")]
         public string VenueAddress { get; set; }
 
         [Required]
-        [StringLength(128, MinimumLength = 3)]
-        [DataType(DataType.Text)]
         [Display(Name = "Şehir")]
         public string VenueCity { get; set; }
 
         [Required]
-        [StringLength(128, MinimumLength = 3)]
-        [DataType(DataType.Text)]
         [Display(Name = "Ülke")]
         public string VenueCountry { get; set; }
 
         [Required]
         [Display(Name = "Biletler")]
-        public List<TicketViewModel> Tickets { get; set; }
+        public List<TicketEditModel> Tickets { get; set; }
     }
 
     public class EventViewModel
@@ -119,13 +104,11 @@ namespace BiBilet.Web.ViewModels
         public List<TicketViewModel> Tickets { get; set; }
     }
 
-    public class TicketViewModel
+    public class TicketEditModel
     {
         public Guid TicketId { get; set; }
 
         [Required]
-        [StringLength(128, MinimumLength = 3)]
-        [DataType(DataType.Text)]
         [Display(Name = "Başlık")]
         public string Title { get; set; }
 
@@ -134,12 +117,78 @@ namespace BiBilet.Web.ViewModels
         public int Quantity { get; set; }
 
         [Required]
-        [DataType(DataType.Currency)]
         [Display(Name = "Ücret")]
         public decimal Price { get; set; }
 
         [Required]
         [Display(Name = "Tip")]
         public TicketType Type { get; set; }
+    }
+
+    public class TicketViewModel
+    {
+        public Guid TicketId { get; set; }
+
+        public string Title { get; set; }
+        public string Quantity { get; set; }
+        public string Price { get; set; }
+        public string Type { get; set; }
+        public bool IsPaid { get; set; }
+        public bool IsAvailable { get; set; }
+    }
+
+    public class ManageEventViewModel
+    {
+        public Guid EventId { get; set; }
+
+        public string Title { get; set; }
+        public int TotalTickets { get; set; }
+        public int TotalPaidTickets { get; set; }
+        public int TotalFreeTickets { get; set; }
+        public int TotalSold { get; set; }
+        public int TotalPaidSold { get; set; }
+        public int TotalFreeSold { get; set; }
+    }
+
+    public class RegisterTicketEditModel
+    {
+        public Guid TicketId { get; set; }
+
+        [Required]
+        [Display(Name = "Ad")]
+        public string FirstName { get; set; }
+
+        [Required]
+        [Display(Name = "Soyad")]
+        public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "E-posta")]
+        public string Email { get; set; }
+
+        [Required]
+        [Display(Name = "Adres")]
+        public string Address { get; set; }
+
+        public string EventTitle { get; set; }
+        public string TicketTitle { get; set; }
+    }
+
+    public class UserTicketViewModel
+    {
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Address { get; set; }
+
+        public string EventTitle { get; set; }
+        public string EventAddress { get; set; }
+        public string EventImage { get; set; }
+        public string EventStartDate { get; set; }
+
+        public string TicketTitle { get; set; }
+        public string TicketType { get; set; }
+
+        public string OrderNumber { get; set; }
+        public string OrderDate { get; set; }
     }
 }

@@ -20,6 +20,7 @@ namespace BiBilet.Web
                 .Include("~/assets/js/bootstrap.js")
                 .Include("~/assets/js/bootstrap-datetimepicker.js")
                 .Include("~/assets/js/bootstrap-table/bootstrap-table.js")
+                .Include("~/assets/js/bootstrap-table/extensions/cookie/bootstrap-table-cookie.js")
                 .Include("~/assets/js/bootstrap-table/locale/bootstrap-table-tr-TR.js")
                 .Include("~/assets/js/site.js"));
 

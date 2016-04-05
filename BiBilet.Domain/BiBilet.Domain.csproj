@@ -50,6 +50,9 @@
     <Compile Include="Entities\Application\Category.cs" />
     <Compile Include="Entities\Application\Event.cs" />
     <Compile Include="Entities\Application\Organizer.cs" />
+    <Compile Include="Repositories\Application\ICategoryRepository.cs" />
+    <Compile Include="Repositories\Application\ITicketRepository.cs" />
+    <Compile Include="Repositories\Application\IUserTicketRepository.cs" />
     <Compile Include="Repositories\Application\ISubTopicRepository.cs" />
     <Compile Include="Repositories\Application\IOrganizerRepository.cs" />
     <Compile Include="Repositories\Application\IEventRepository.cs" />

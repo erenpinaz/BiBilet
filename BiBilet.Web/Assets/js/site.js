@@ -51,12 +51,12 @@ $(function () {
     });
 
     // Configure image uploaders
-    var $imageUploader = $("#imageUploader");
+    var imageUploaderModal = $("#imageUploaderModal");
     var $imageUploaderTrigger = $("button.uploader-trigger");
 
-    if ($imageUploader.length > 0) {
-        var $cropForm = $imageUploader.find("form");
-        var $cropEditor = $imageUploader.find(".crop-editor");
+    if (imageUploaderModal.length > 0) {
+        var $cropForm = imageUploaderModal.find("form");
+        var $cropEditor = imageUploaderModal.find(".crop-editor");
         var $fileInput = $cropEditor.find(".cropit-image-input");
 
         $imageUploaderTrigger.on("click", function (e) {
@@ -65,7 +65,7 @@ $(function () {
             if ($fileInput.get(0).files.length === 0) {
                 $fileInput.trigger("click");
             } else {
-                $imageUploader.modal("show");
+                imageUploaderModal.modal("show");
             }
         });
 
@@ -81,7 +81,7 @@ $(function () {
                 if (file) {
                     if (file.type.match("image/jpeg") || file.type.match("image/jpg") ||
                         file.type.match("image/gif") || file.type.match("image/png")) {
-                        $imageUploader.modal("show");
+                        imageUploaderModal.modal("show");
                     }
                 } else {
                     alert("Dosya seçilmedi.");
@@ -125,12 +125,12 @@ $(function () {
                         $finalImage.val(response.path);
                     }
                 },
-                complete: function() {
+                complete: function () {
                     $(".progress-bar")
                             .css("width", 0)
                             .attr("aria-valuenow", 0);
 
-                    $imageUploader.modal("hide");
+                    imageUploaderModal.modal("hide");
                 }
             });
         });
@@ -286,6 +286,41 @@ $(function () {
             });
         }
     }
+
+    // Event registration (free ticket) modal
+    var getTicketModal = $("#getTicketModal");
+    if (getTicketModal.length > 0) {
+        getTicketModal.on("show.bs.modal", function (event) {
+            var $button = $(event.relatedTarget);
+            var url = $button.data("url");
+            var $modal = $(this);
+
+            $modal.find(".modal-content").html("<img src='/assets/images/ajax-loader.gif' alt='Loader' width='64' style='display:block; margin: 20px auto;'>");
+
+            $.ajax({
+                cache: false,
+                url: url,
+                method: "GET",
+                success: function (data, status, xhr) {
+                    var authJson = JSON.parse(xhr.getResponseHeader("X-Responded-Json"));
+                    if (authJson) {
+                        window.location.replace(authJson.headers.location);
+                    }
+
+                    if (data) {
+                        $modal.find(".modal-content").html(data);
+                        parseForValidations($modal.find("form"));
+                    }
+                },
+                error: function (data, status, xhr) {
+                    alert(status);
+                }
+            });
+        });
+    }
+
+    // Event registration (paid ticket) modal
+    //TODO: Implement paid ticket transaction
 });
 
 /* ========================
@@ -297,6 +332,7 @@ function eventTitleFormatter(value, row) {
     return [
         value,
         "<ul class='list-unstyled list-inline'>",
+        "<li><a class='manage' href='/event/manageevent?id=" + row.eventid + "'>Yönet</a></li>",
         "<li><a class='update' href='/event/updateevent?id=" + row.eventid + "'>Güncelle</a></li>",
         "<li><a class='remove' href='/event/deleteevent?id=" + row.eventid + "'>Sil</a></li>",
         "</ul>"

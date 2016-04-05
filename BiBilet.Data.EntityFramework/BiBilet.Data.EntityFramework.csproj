@@ -63,6 +63,9 @@
     <Compile Include="Configuration\Identity\RoleConfiguration.cs" />
     <Compile Include="Configuration\Identity\UserConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\Application\CategoryRepository.cs" />
+    <Compile Include="Repositories\Application\TicketRepository.cs" />
+    <Compile Include="Repositories\Application\UserTicketRepository.cs" />
     <Compile Include="Repositories\Application\SubTopicRepository.cs" />
     <Compile Include="Repositories\Application\OrganizerRepository.cs" />
     <Compile Include="Repositories\Application\EventRepository.cs" />

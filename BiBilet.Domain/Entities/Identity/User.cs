@@ -51,7 +51,7 @@ namespace BiBilet.Domain.Entities.Identity
             set { _roles = value; }
         }
 
-        public ICollection<UserTicket> UserTickets
+        public virtual ICollection<UserTicket> UserTickets
         {
             get { return _userTickets ?? (_userTickets = new List<UserTicket>()); }
             set { _userTickets = value; }

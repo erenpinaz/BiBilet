@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -55,7 +56,7 @@ namespace BiBilet.Web.Controllers
                 OrganizerName = eventObj.Organizer.Name,
                 VenueName = eventObj.Venue.Name,
                 VenueAddress =
-                    string.Format("{0} {1}, {2}", eventObj.Venue.Address, eventObj.Venue.City, eventObj.Venue.Country),
+                    string.Format("{0} {1} / {2}", eventObj.Venue.Address, eventObj.Venue.City, eventObj.Venue.Country),
                 TopicName = eventObj.Topic.Name,
                 SubTopicName = eventObj.SubTopic.Name,
                 IsLive = eventObj.StartDate >= DateTime.UtcNow,
@@ -63,9 +64,13 @@ namespace BiBilet.Web.Controllers
                 {
                     TicketId = t.TicketId,
                     Title = t.Title,
-                    Quantity = t.Quantity,
-                    Price = t.Price,
-                    Type = t.Type
+                    Quantity = t.Quantity - t.UserTickets.Count == 0
+                        ? "Tükenmiş"
+                        : (t.Quantity - t.UserTickets.Count).ToString(),
+                    Price = t.Price.ToString(CultureInfo.DefaultThreadCurrentCulture),
+                    Type = t.Type == TicketType.Free ? "Bedava" : "Ücretli",
+                    IsPaid = t.Type == TicketType.Paid && t.Price > 0,
+                    IsAvailable = t.Quantity - t.UserTickets.Count > 0
                 }).ToList()
             });
         }
@@ -135,33 +140,15 @@ namespace BiBilet.Web.Controllers
 
                             foreach (var ticketVm in model.Tickets)
                             {
-                                if (ticketVm.TicketId == Guid.Empty)
+                                eventObj.Tickets.Add(new Ticket
                                 {
-                                    UnitOfWork.TicketRepository.Add(new Ticket
-                                    {
-                                        TicketId = Guid.NewGuid(),
-                                        EventId = eventObj.EventId,
-                                        Title = ticketVm.Title,
-                                        Quantity = ticketVm.Quantity,
-                                        Price = ticketVm.Price,
-                                        Type = ticketVm.Price == decimal.Zero ? TicketType.Free : TicketType.Paid
-                                    });
-                                }
-                                else
-                                {
-                                    var ticket =
-                                        eventObj.Tickets.FirstOrDefault(t => t.TicketId == ticketVm.TicketId);
-                                    if (ticket != null)
-                                    {
-                                        ticket.EventId = eventObj.EventId;
-                                        ticket.Title = ticketVm.Title;
-                                        ticket.Quantity = ticketVm.Quantity;
-                                        ticket.Price = ticketVm.Price;
-                                        ticket.Type = ticketVm.Price == decimal.Zero ? TicketType.Free : TicketType.Paid;
-
-                                        UnitOfWork.TicketRepository.Update(ticket);
-                                    }
-                                }
+                                    TicketId = Guid.NewGuid(),
+                                    EventId = eventObj.EventId,
+                                    Title = ticketVm.Title,
+                                    Quantity = ticketVm.Quantity,
+                                    Price = ticketVm.Price,
+                                    Type = ticketVm.Price == decimal.Zero ? TicketType.Free : TicketType.Paid
+                                });
                             }
 
                             await UnitOfWork.SaveChangesAsync();
@@ -244,7 +231,7 @@ namespace BiBilet.Web.Controllers
                 VenueAddress = eventObj.Venue.Address,
                 VenueCity = eventObj.Venue.City,
                 VenueCountry = eventObj.Venue.Country,
-                Tickets = eventObj.Tickets.Select(t => new TicketViewModel
+                Tickets = eventObj.Tickets.Select(t => new TicketEditModel
                 {
                     TicketId = t.TicketId,
                     Title = t.Title,
@@ -287,11 +274,16 @@ namespace BiBilet.Web.Controllers
                             eventObj.StartDate = model.StartDate;
                             eventObj.EndDate = model.EndDate;
 
+                            eventObj.Venue.Name = model.VenueName;
+                            eventObj.Venue.Address = model.VenueAddress;
+                            eventObj.Venue.City = model.VenueCity;
+                            eventObj.Venue.Country = model.VenueCountry;
+
                             foreach (var ticketVm in model.Tickets)
                             {
                                 if (ticketVm.TicketId == Guid.Empty)
                                 {
-                                    UnitOfWork.TicketRepository.Add(new Ticket
+                                    eventObj.Tickets.Add(new Ticket
                                     {
                                         TicketId = Guid.NewGuid(),
                                         EventId = eventObj.EventId,
@@ -312,8 +304,6 @@ namespace BiBilet.Web.Controllers
                                         ticket.Quantity = ticketVm.Quantity;
                                         ticket.Price = ticketVm.Price;
                                         ticket.Type = ticketVm.Price == decimal.Zero ? TicketType.Free : TicketType.Paid;
-
-                                        UnitOfWork.TicketRepository.Update(ticket);
                                     }
                                 }
                             }
@@ -410,6 +400,35 @@ namespace BiBilet.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<ActionResult> ManageEvent(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var eventObj =
+                await UnitOfWork.EventRepository.GetUserEventAsync(id.Value, GetGuid(User.Identity.GetUserId()));
+            if (eventObj == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            }
+
+            return View(new ManageEventViewModel
+            {
+                EventId = eventObj.EventId,
+                Title = eventObj.Title,
+                TotalTickets = eventObj.Tickets.Sum(t => t.Quantity),
+                TotalPaidTickets = eventObj.Tickets.Where(t => t.Type == TicketType.Paid).Sum(t => t.Quantity),
+                TotalFreeTickets = eventObj.Tickets.Where(t => t.Type == TicketType.Free).Sum(t => t.Quantity),
+                TotalSold = eventObj.Tickets.SelectMany(t => t.UserTickets).Count(),
+                TotalPaidSold =
+                    eventObj.Tickets.Where(t => t.Type == TicketType.Paid).SelectMany(t => t.UserTickets).Count(),
+                TotalFreeSold =
+                    eventObj.Tickets.Where(t => t.Type == TicketType.Free).SelectMany(t => t.UserTickets).Count()
+            });
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult UploadEventImage(int x, int y, int w, int h)
@@ -447,7 +466,7 @@ namespace BiBilet.Web.Controllers
         [HttpGet]
         public ActionResult AddTicketItem(string type)
         {
-            return PartialView("_TicketItem", new TicketViewModel
+            return PartialView("_TicketItem", new TicketEditModel
             {
                 Type = type == "free" ? TicketType.Free : TicketType.Paid
             });
@@ -492,6 +511,29 @@ namespace BiBilet.Web.Controllers
             {
                 subtopicid = s.SubTopicId,
                 name = s.Name
+            });
+
+            return Json(json, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> PopulateAttendees(Guid? id)
+        {
+            if (!Request.IsAjaxRequest() || id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var attendees = await UnitOfWork.UserTicketRepository.GetAttendeesAsync(id.Value);
+            var json = attendees.Select(ut => new
+            {
+                name = ut.OwnerName,
+                email = ut.OwnerEmail,
+                address = ut.OwnerAddress,
+                tickettitle = ut.Ticket.Title,
+                tickettype = ut.Ticket.Type == TicketType.Free ? "Bedava" : "Ücretli",
+                ordernumber = ut.OrderNumber,
+                orderdate = ut.OrderDate
             });
 
             return Json(json, JsonRequestBehavior.AllowGet);
