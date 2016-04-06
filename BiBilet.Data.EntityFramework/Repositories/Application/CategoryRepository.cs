@@ -25,7 +25,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// <summary>
         /// Returns a list of categories including events
         /// </summary>
-        /// <returns>A list of <see cref="Category"/></returns>
+        /// <returns>A list of <see cref="Category" /></returns>
         public List<Category> GetCategoriesWithEvents()
         {
             return Set
@@ -38,7 +38,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// <summary>
         /// Asynchronously returns a list of categories including events
         /// </summary>
-        /// <returns>A list of <see cref="Category"/></returns>
+        /// <returns>A list of <see cref="Category" /></returns>
         public Task<List<Category>> GetCategoriesWithEventsAsync()
         {
             return Set
@@ -52,7 +52,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// Asynchronously returns a list of categories including events
         /// with cancellation support
         /// </summary>
-        /// <returns>A list of <see cref="Category"/></returns>
+        /// <returns>A list of <see cref="Category" /></returns>
         public Task<List<Category>> GetCategoriesWithEventsAsync(CancellationToken cancellationToken)
         {
             return Set

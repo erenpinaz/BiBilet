@@ -34,7 +34,7 @@ namespace BiBilet.Data.EntityFramework
 
         #region IDisposable Members
 
-        private bool _disposed = false;
+        private bool _disposed;
 
         /// <summary>
         /// Disposes all the resources used by the <see cref="UnitOfWork" />

@@ -27,7 +27,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// Returns a list of user tickets
         /// </summary>
         /// <param name="userId"></param>
-        /// <returns>A list of <see cref="UserTicket"/></returns>
+        /// <returns>A list of <see cref="UserTicket" /></returns>
         public List<UserTicket> GetUserTickets(Guid userId)
         {
             return Set
@@ -40,7 +40,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// Asynchronously returns a list of user tickets
         /// </summary>
         /// <param name="userId"></param>
-        /// <returns>A list of <see cref="UserTicket"/></returns>
+        /// <returns>A list of <see cref="UserTicket" /></returns>
         public Task<List<UserTicket>> GetUserTicketsAsync(Guid userId)
         {
             return Set
@@ -55,7 +55,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="cancellationToken"></param>
-        /// <returns>A list of <see cref="UserTicket"/></returns>
+        /// <returns>A list of <see cref="UserTicket" /></returns>
         public Task<List<UserTicket>> GetUserTicketsAsync(Guid userId, CancellationToken cancellationToken)
         {
             return Set
@@ -68,7 +68,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// Returns a single user ticket
         /// </summary>
         /// <param name="orderNumber"></param>
-        /// <returns>A single <see cref="UserTicket"/></returns>
+        /// <returns>A single <see cref="UserTicket" /></returns>
         public UserTicket GetUserTicke(string orderNumber)
         {
             return Set
@@ -81,7 +81,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// Asynchronously returns a single user ticket
         /// </summary>
         /// <param name="orderNumber"></param>
-        /// <returns>A single <see cref="UserTicket"/></returns>
+        /// <returns>A single <see cref="UserTicket" /></returns>
         public Task<UserTicket> GetUserTicketAsync(string orderNumber)
         {
             return Set
@@ -96,7 +96,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// </summary>
         /// <param name="orderNumber"></param>
         /// <param name="cancellationToken"></param>
-        /// <returns>A single <see cref="UserTicket"/></returns>
+        /// <returns>A single <see cref="UserTicket" /></returns>
         public Task<UserTicket> GetUserTicketAsync(string orderNumber, CancellationToken cancellationToken)
         {
             return Set
@@ -109,7 +109,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// Returns a list of ticket owners
         /// </summary>
         /// <param name="eventId"></param>
-        /// <returns>A list of <see cref="UserTicket"/></returns>
+        /// <returns>A list of <see cref="UserTicket" /></returns>
         public List<UserTicket> GetAttendees(Guid eventId)
         {
             return Set.Where(ut => ut.Ticket.EventId == eventId).ToList();
@@ -119,7 +119,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// Asynchronously returns a list of ticket owners
         /// </summary>
         /// <param name="eventId"></param>
-        /// <returns>A list of <see cref="UserTicket"/></returns>
+        /// <returns>A list of <see cref="UserTicket" /></returns>
         public Task<List<UserTicket>> GetAttendeesAsync(Guid eventId)
         {
             return Set.Where(ut => ut.Ticket.EventId == eventId).ToListAsync();
@@ -131,7 +131,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// </summary>
         /// <param name="eventId"></param>
         /// <param name="cancellationToken"></param>
-        /// <returns>A list of <see cref="UserTicket"/></returns>
+        /// <returns>A list of <see cref="UserTicket" /></returns>
         public Task<List<UserTicket>> GetAttendeesAsync(Guid eventId, CancellationToken cancellationToken)
         {
             return Set.Where(ut => ut.Ticket.EventId == eventId).ToListAsync(cancellationToken);

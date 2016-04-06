@@ -26,7 +26,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// <summary>
         /// Returns a list of published events
         /// </summary>
-        /// <returns>List of published <see cref="Event"/></returns>
+        /// <returns>List of published <see cref="Event" /></returns>
         public virtual List<Event> GetEvents()
         {
             return Set
@@ -39,7 +39,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// <summary>
         /// Asynchronously returns a list of published events
         /// </summary>
-        /// <returns>List of published <see cref="Event"/></returns>
+        /// <returns>List of published <see cref="Event" /></returns>
         public virtual Task<List<Event>> GetEventsAsync()
         {
             return Set
@@ -54,7 +54,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// with cancellation support
         /// </summary>
         /// <param name="cancellationToken"></param>
-        /// <returns>List of published <see cref="Event"/></returns>
+        /// <returns>List of published <see cref="Event" /></returns>
         public virtual Task<List<Event>> GetEventsAsync(CancellationToken cancellationToken)
         {
             return Set
@@ -68,7 +68,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// Returns single published event
         /// </summary>
         /// <param name="slug"></param>
-        /// <returns>A published <see cref="Event"/></returns>
+        /// <returns>A published <see cref="Event" /></returns>
         public virtual Event GetEvent(string slug)
         {
             return Set
@@ -85,7 +85,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// Asynchronously returns single published event
         /// </summary>
         /// <param name="slug"></param>
-        /// <returns>A published <see cref="Event"/></returns>
+        /// <returns>A published <see cref="Event" /></returns>
         public virtual Task<Event> GetEventAsync(string slug)
         {
             return Set
@@ -103,7 +103,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// </summary>
         /// <param name="slug"></param>
         /// <param name="cancellationToken"></param>
-        /// <returns>A published <see cref="Event"/></returns>
+        /// <returns>A published <see cref="Event" /></returns>
         public virtual Task<Event> GetEventAsync(string slug, CancellationToken cancellationToken)
         {
             return Set

@@ -27,7 +27,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// Returns a list of sub topics
         /// </summary>
         /// <param name="topicId"></param>
-        /// <returns>A list of <see cref="SubTopic"/></returns>
+        /// <returns>A list of <see cref="SubTopic" /></returns>
         public List<SubTopic> GetSubTopics(Guid topicId)
         {
             return Set.Where(s => s.TopicId == topicId).ToList();
@@ -37,7 +37,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// Asynchronously returns a list of sub topics
         /// </summary>
         /// <param name="topicId"></param>
-        /// <returns>A list of <see cref="SubTopic"/></returns>
+        /// <returns>A list of <see cref="SubTopic" /></returns>
         public Task<List<SubTopic>> GetSubTopicsAsync(Guid topicId)
         {
             return Set.Where(s => s.TopicId == topicId).ToListAsync();
@@ -49,7 +49,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// </summary>
         /// <param name="topicId"></param>
         /// <param name="cancellationToken"></param>
-        /// <returns>A list of <see cref="SubTopic"/></returns>
+        /// <returns>A list of <see cref="SubTopic" /></returns>
         public Task<List<SubTopic>> GetSubTopicsAsync(Guid topicId, CancellationToken cancellationToken)
         {
             return Set.Where(s => s.TopicId == topicId).ToListAsync(cancellationToken);

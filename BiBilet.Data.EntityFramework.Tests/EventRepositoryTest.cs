@@ -11,14 +11,6 @@ namespace BiBilet.Data.EntityFramework.Tests
 {
     public class EventRepositoryTest
     {
-        #region Variables
-
-        private BiBiletContext _dbContext;
-        private IEventRepository _eventRepository;
-        private List<Event> _expectedEvents;
-
-        #endregion
-
         /// <summary>
         /// Initial setup (one-time)
         /// </summary>
@@ -110,5 +102,13 @@ namespace BiBilet.Data.EntityFramework.Tests
 
             Assert.IsNull(_expectedEvents.Find(e => e.EventId.Equals(eventId)));
         }
+
+        #region Variables
+
+        private BiBiletContext _dbContext;
+        private IEventRepository _eventRepository;
+        private List<Event> _expectedEvents;
+
+        #endregion
     }
 }

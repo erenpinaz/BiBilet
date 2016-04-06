@@ -7,7 +7,7 @@ using BiBilet.Domain.Entities.Application;
 namespace BiBilet.Domain.Repositories.Application
 {
     /// <summary>
-    /// Repository interface for <see cref="Organizer"/>
+    /// Repository interface for <see cref="Organizer" />
     /// </summary>
     public interface IOrganizerRepository : IRepository<Organizer>
     {

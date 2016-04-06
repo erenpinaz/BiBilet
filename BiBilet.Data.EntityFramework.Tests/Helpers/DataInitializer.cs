@@ -12,9 +12,9 @@ namespace BiBilet.Data.EntityFramework.Tests.Helpers
         /// <returns></returns>
         public static List<Event> GetAllEvents()
         {
-            var events = new List<Event>()
+            var events = new List<Event>
             {
-                new Event()
+                new Event
                 {
                     EventId = Guid.Parse("454a94a7-8de3-48be-b75e-cb99b18bc0d0"),
                     Title = "Test Event",
@@ -25,7 +25,7 @@ namespace BiBilet.Data.EntityFramework.Tests.Helpers
                     StartDate = new DateTime(2016, 6, 12),
                     EndDate = new DateTime(2016, 6, 15)
                 },
-                new Event()
+                new Event
                 {
                     EventId = Guid.Parse("64e1129e-c700-4805-92a9-caac1ad9ccbf"),
                     Title = "Test Event 2",

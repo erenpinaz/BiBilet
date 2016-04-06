@@ -5,7 +5,7 @@ using BiBilet.Domain.Entities.Identity;
 namespace BiBilet.Domain.Repositories.Identity
 {
     /// <summary>
-    /// Repository interface for <see cref="Role"/>
+    /// Repository interface for <see cref="Role" />
     /// </summary>
     public interface IRoleRepository : IRepository<Role>
     {

@@ -5,7 +5,7 @@ using BiBilet.Domain.Entities.Identity;
 namespace BiBilet.Domain.Repositories.Identity
 {
     /// <summary>
-    /// Repository interface for <see cref="ExternalLogin"/>
+    /// Repository interface for <see cref="ExternalLogin" />
     /// </summary>
     public interface IExternalLoginRepository : IRepository<ExternalLogin>
     {

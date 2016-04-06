@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BiBilet.Domain.Entities.Application;
 using BiBilet.Domain.Entities.Identity;
 using BiBilet.Domain.Repositories.Identity;
 
@@ -74,7 +73,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Identity
         }
 
         /// <summary>
-        /// Asynchronously returns user 
+        /// Asynchronously returns user
         /// with cancellation support
         /// </summary>
         /// <param name="email"></param>

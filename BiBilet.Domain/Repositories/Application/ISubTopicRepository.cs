@@ -7,7 +7,7 @@ using BiBilet.Domain.Entities.Application;
 namespace BiBilet.Domain.Repositories.Application
 {
     /// <summary>
-    /// Repository interface for <see cref="SubTopic"/>
+    /// Repository interface for <see cref="SubTopic" />
     /// </summary>
     public interface ISubTopicRepository : IRepository<SubTopic>
     {
@@ -15,14 +15,14 @@ namespace BiBilet.Domain.Repositories.Application
         /// Returns a list of sub topics
         /// </summary>
         /// <param name="topicId"></param>
-        /// <returns>A list of <see cref="SubTopic"/></returns>
+        /// <returns>A list of <see cref="SubTopic" /></returns>
         List<SubTopic> GetSubTopics(Guid topicId);
 
         /// <summary>
         /// Asynchronously returns a list of sub topics
         /// </summary>
         /// <param name="topicId"></param>
-        /// <returns>A list of <see cref="SubTopic"/></returns>
+        /// <returns>A list of <see cref="SubTopic" /></returns>
         Task<List<SubTopic>> GetSubTopicsAsync(Guid topicId);
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace BiBilet.Domain.Repositories.Application
         /// </summary>
         /// <param name="topicId"></param>
         /// <param name="cancellationToken"></param>
-        /// <returns>A list of <see cref="SubTopic"/></returns>
+        /// <returns>A list of <see cref="SubTopic" /></returns>
         Task<List<SubTopic>> GetSubTopicsAsync(Guid topicId, CancellationToken cancellationToken);
     }
 }

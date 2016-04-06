@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading;
@@ -27,7 +26,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// Returns a single ticket
         /// </summary>
         /// <param name="id"></param>
-        /// <returns>A single <see cref="Ticket"/></returns>
+        /// <returns>A single <see cref="Ticket" /></returns>
         public Ticket GetTicket(Guid id)
         {
             return Set.FirstOrDefault(t => t.TicketId == id);
@@ -37,7 +36,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// Asynchronously returns a single ticket
         /// </summary>
         /// <param name="id"></param>
-        /// <returns>A single <see cref="Ticket"/></returns>
+        /// <returns>A single <see cref="Ticket" /></returns>
         public Task<Ticket> GetTicketAsync(Guid id)
         {
             return Set
@@ -51,7 +50,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         /// </summary>
         /// <param name="id"></param>
         /// <param name="cancellationToken"></param>
-        /// <returns>A single <see cref="Ticket"/></returns>
+        /// <returns>A single <see cref="Ticket" /></returns>
         public Task<Ticket> GetTicketAsync(Guid id, CancellationToken cancellationToken)
         {
             return Set

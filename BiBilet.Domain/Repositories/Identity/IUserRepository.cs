@@ -5,7 +5,7 @@ using BiBilet.Domain.Entities.Identity;
 namespace BiBilet.Domain.Repositories.Identity
 {
     /// <summary>
-    /// Repository interface for <see cref="User"/>
+    /// Repository interface for <see cref="User" />
     /// </summary>
     public interface IUserRepository : IRepository<User>
     {
@@ -24,7 +24,7 @@ namespace BiBilet.Domain.Repositories.Identity
         Task<User> FindByUserNameAsync(string username);
 
         /// <summary>
-        /// Asynchronously returns user 
+        /// Asynchronously returns user
         /// with cancellation support
         /// </summary>
         /// <param name="cancellationToken"></param>
@@ -47,7 +47,7 @@ namespace BiBilet.Domain.Repositories.Identity
         Task<User> FindByEmailAsync(string email);
 
         /// <summary>
-        /// Asynchronously returns user 
+        /// Asynchronously returns user
         /// with cancellation support
         /// </summary>
         /// <param name="email"></param>
