@@ -448,6 +448,7 @@
     </Compile>
     <Compile Include="Helpers\HtmlHelpers.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtensions.cs" />
+    <Compile Include="HttpModules\ResponseHeaderModule.cs" />
     <Compile Include="Identity\IdentityRole.cs" />
     <Compile Include="Identity\IdentityUser.cs" />
     <Compile Include="Identity\RoleStore.cs" />
