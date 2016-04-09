@@ -6781,11 +6781,12 @@ button.close {
   padding: 20px;
   min-height: 680px;
 }
+.footer {
+  padding: 20px;
+}
 .categories .thumbnail {
   position: relative;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center center;
+  background-color: #8F3EA9;
   height: 240px;
 }
 .categories .thumbnail .name-wrapper {
