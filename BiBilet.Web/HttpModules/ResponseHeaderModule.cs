@@ -12,7 +12,6 @@ namespace BiBilet.Web.HttpModules
 
         public void Dispose()
         {
-            throw new NotImplementedException();
         }
 
         private static void OnPreSendRequestHeaders(object sender, EventArgs e)

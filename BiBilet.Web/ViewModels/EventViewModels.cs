@@ -6,8 +6,6 @@ using System.Web.Mvc;
 
 namespace BiBilet.Web.ViewModels
 {
-    //TODO: Add more data annotations
-
     public class EventEditModel
     {
         public EventEditModel()
@@ -37,6 +35,8 @@ namespace BiBilet.Web.ViewModels
         public Guid SubTopicId { get; set; }
 
         [Required]
+        [StringLength(256, MinimumLength = 3)]
+        [DataType(DataType.Text)]
         [Display(Name = "Başlık")]
         public string Title { get; set; }
 
@@ -47,37 +47,49 @@ namespace BiBilet.Web.ViewModels
         public string Description { get; set; }
 
         [Required]
+        [DataType(DataType.ImageUrl)]
         [Display(Name = "Resim")]
         public string Image { get; set; }
 
         [Required]
-        [Display(Name = "Url Kısaltması")]
+        [StringLength(256, MinimumLength = 3)]
+        [DataType(DataType.Text)]
+        [Display(Name = "Url kısaltması")]
         public string Slug { get; set; }
 
         [Display(Name = "Yayınla")]
         public bool Published { get; set; }
 
         [Required]
+        [DataType(DataType.DateTime)]
         [Display(Name = "Başlangıç")]
         public DateTime StartDate { get; set; }
 
         [Required]
+        [DataType(DataType.DateTime)]
         [Display(Name = "Bitiş")]
         public DateTime EndDate { get; set; }
 
         [Required]
+        [StringLength(256, MinimumLength = 3)]
+        [DataType(DataType.Text)]
         [Display(Name = "İsim")]
         public string VenueName { get; set; }
 
         [Required]
+        [DataType(DataType.Text)]
         [Display(Name = "Adres")]
         public string VenueAddress { get; set; }
 
         [Required]
+        [StringLength(64, MinimumLength = 3)]
+        [DataType(DataType.Text)]
         [Display(Name = "Şehir")]
         public string VenueCity { get; set; }
 
         [Required]
+        [StringLength(64, MinimumLength = 3)]
+        [DataType(DataType.Text)]
         [Display(Name = "Ülke")]
         public string VenueCountry { get; set; }
 
@@ -109,14 +121,18 @@ namespace BiBilet.Web.ViewModels
         public Guid TicketId { get; set; }
 
         [Required]
+        [StringLength(128, MinimumLength = 3)]
+        [DataType(DataType.Text)]
         [Display(Name = "Başlık")]
         public string Title { get; set; }
 
         [Required]
+        [Range(1, 500)]
         [Display(Name = "Adet")]
         public int Quantity { get; set; }
 
         [Required]
+        [Range(0, 500)]
         [Display(Name = "Ücret")]
         public decimal Price { get; set; }
 
@@ -155,18 +171,26 @@ namespace BiBilet.Web.ViewModels
         public Guid TicketId { get; set; }
 
         [Required]
+        [StringLength(64, MinimumLength = 3)]
+        [DataType(DataType.Text)]
         [Display(Name = "Ad")]
         public string FirstName { get; set; }
 
         [Required]
+        [StringLength(64, MinimumLength = 3)]
+        [DataType(DataType.Text)]
         [Display(Name = "Soyad")]
         public string LastName { get; set; }
 
         [Required]
+        [StringLength(320, MinimumLength = 3)]
+        [EmailAddress]
+        [DataType(DataType.EmailAddress)]
         [Display(Name = "E-posta")]
         public string Email { get; set; }
 
         [Required]
+        [DataType(DataType.Text)]
         [Display(Name = "Adres")]
         public string Address { get; set; }
 

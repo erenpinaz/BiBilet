@@ -15,6 +15,7 @@ namespace BiBilet.Web.ViewModels
         public string Name { get; set; }
 
         [Required]
+        [StringLength(6144, MinimumLength = 3)]
         [DataType(DataType.MultilineText)]
         [AllowHtml]
         [Display(Name = "Açıklama")]
@@ -22,7 +23,7 @@ namespace BiBilet.Web.ViewModels
 
         [StringLength(256, MinimumLength = 3)]
         [DataType(DataType.Url)]
-        [Display(Name = "Website")]
+        [Display(Name = "Web sayfası")]
         public string Website { get; set; }
 
         [Required]
@@ -33,7 +34,7 @@ namespace BiBilet.Web.ViewModels
         [Required]
         [StringLength(128, MinimumLength = 3)]
         [DataType(DataType.Text)]
-        [Display(Name = "Url Kısaltması")]
+        [Display(Name = "Url kısaltması")]
         public string Slug { get; set; }
 
         public bool IsRemovable { get; set; }
@@ -77,6 +78,7 @@ namespace BiBilet.Web.ViewModels
     public class LoginEditModel
     {
         [Required]
+        [DataType(DataType.Text)]
         [Display(Name = "Kullanıcı adı")]
         public string UserName { get; set; }
 
