@@ -40,9 +40,12 @@ $(function () {
 
     // Localize (tr) jQuery validation for decimal and date
     jQuery.extend(jQuery.validator.methods, {
+        range: function (value, element, param) {
+            var globalizedValue = value.replace(",", ".");
+            return this.optional(element) || (globalizedValue >= param[0] && globalizedValue <= param[1]);
+        },
         number: function (value, element) {
-            return this.optional(element)
-                || /^-?(?:\d+|\d{1,3}(?:[\s\,]\d{3})+)(?:[\,]\d+)?$/.test(value);
+            return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:[\s\.,]\d{3})+)(?:[\.,]\d+)?$/.test(value);
         },
         date: function (value, element) {
             return this.optional(element)
