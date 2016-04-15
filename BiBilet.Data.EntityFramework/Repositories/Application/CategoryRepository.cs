@@ -23,7 +23,8 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
         }
 
         /// <summary>
-        /// Returns a list of categories including events
+        /// Returns a list of categories including 
+        /// published events
         /// </summary>
         /// <returns>A list of <see cref="Category" /></returns>
         public List<Category> GetCategoriesWithEvents()
@@ -32,11 +33,13 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
                 .Include(c => c.Events.Select(e => e.Venue))
                 .Include(c => c.Events.Select(e => e.Topic))
                 .Include(c => c.Events.Select(e => e.SubTopic))
+                .Where(c => c.Events.Count(e => e.Published) > 0)
                 .ToList();
         }
 
         /// <summary>
-        /// Asynchronously returns a list of categories including events
+        /// Asynchronously returns a list of categories 
+        /// including published events
         /// </summary>
         /// <returns>A list of <see cref="Category" /></returns>
         public Task<List<Category>> GetCategoriesWithEventsAsync()
@@ -45,12 +48,14 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
                 .Include(c => c.Events.Select(e => e.Venue))
                 .Include(c => c.Events.Select(e => e.Topic))
                 .Include(c => c.Events.Select(e => e.SubTopic))
+                .Where(c => c.Events.Count(e => e.Published) > 0)
                 .ToListAsync();
         }
 
         /// <summary>
-        /// Asynchronously returns a list of categories including events
-        /// with cancellation support
+        /// Asynchronously returns a list of categories 
+        /// including published events with cancellation 
+        /// support
         /// </summary>
         /// <returns>A list of <see cref="Category" /></returns>
         public Task<List<Category>> GetCategoriesWithEventsAsync(CancellationToken cancellationToken)
@@ -59,6 +64,7 @@ namespace BiBilet.Data.EntityFramework.Repositories.Application
                 .Include(c => c.Events.Select(e => e.Venue))
                 .Include(c => c.Events.Select(e => e.Topic))
                 .Include(c => c.Events.Select(e => e.SubTopic))
+                .Where(c => c.Events.Count(e => e.Published) > 0)
                 .ToListAsync(cancellationToken);
         }
     }

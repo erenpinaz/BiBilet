@@ -25,7 +25,7 @@ namespace BiBilet.Web.Controllers
             var userTickets =
                 await UnitOfWork.UserTicketRepository.GetUserTicketsAsync(GetGuid(User.Identity.GetUserId()));
 
-            return View(userTickets.Select(ut => new UserTicketViewModel()
+            return View(userTickets.Select(ut => new UserTicketViewModel
             {
                 Name = ut.OwnerName,
                 Email = ut.OwnerEmail,
@@ -61,7 +61,7 @@ namespace BiBilet.Web.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
             }
 
-            return PartialView("_RegisterTicket", new RegisterTicketEditModel()
+            return PartialView("_RegisterTicket", new RegisterTicketEditModel
             {
                 TicketId = ticket.TicketId,
                 EventTitle = ticket.Event.Title,
@@ -85,7 +85,7 @@ namespace BiBilet.Web.Controllers
                     return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
                 }
 
-                var userTicket = new UserTicket()
+                var userTicket = new UserTicket
                 {
                     TicketId = model.TicketId,
                     UserId = GetGuid(User.Identity.GetUserId()),
@@ -116,7 +116,7 @@ namespace BiBilet.Web.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound);
             }
 
-            return new ViewAsPdf(new UserTicketViewModel()
+            return new ViewAsPdf(new UserTicketViewModel
             {
                 Name = userTicket.OwnerName,
                 Email = userTicket.OwnerEmail,

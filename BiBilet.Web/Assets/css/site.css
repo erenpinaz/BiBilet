@@ -6751,6 +6751,9 @@ button.close {
   padding: 0;
   list-style: none;
 }
+i.margin-right {
+  margin-right: 8px;
+}
 .navbar {
   margin-bottom: 0;
 }
@@ -6858,10 +6861,6 @@ button.close {
 .events .thumbnail img {
   width: 240px;
 }
-.events i.glyphicon,
-.event-details i.glyphicon {
-  margin-right: 8px;
-}
 #userTickets .ticket-orders .ticket-order-card {
   position: relative;
 }
@@ -6873,7 +6872,7 @@ button.close {
   box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
   display: block;
   padding: 10px;
-  margin-top: 10px;
+  margin-bottom: 10px;
   text-decoration: none;
 }
 #userTickets .ticket-orders .ticket-order-card > a:hover {
@@ -6894,4 +6893,26 @@ button.close {
   position: absolute;
   top: 20px;
   right: 25px;
+}
+#searchEvent .event-card-list .event-card-item > a {
+  overflow: hidden;
+  zoom: 1;
+  color: #333;
+  background-color: #f5f5f5;
+  box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
+  display: block;
+  padding: 10px;
+  margin-bottom: 10px;
+  text-decoration: none;
+}
+#searchEvent .event-card-list .event-card-item > a:hover {
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.25);
+}
+#searchEvent .event-card-list .event-card-item > a .event-image {
+  width: 120px;
+  margin-right: 10px;
+  float: left;
+}
+#searchEvent .event-card-list .event-card-item > a .event-info h3 {
+  margin: 0;
 }

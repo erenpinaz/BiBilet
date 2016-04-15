@@ -11,20 +11,23 @@ namespace BiBilet.Domain.Repositories.Application
     public interface ICategoryRepository : IRepository<Category>
     {
         /// <summary>
-        /// Returns a list of categories including events
+        /// Returns a list of categories including 
+        /// published events
         /// </summary>
         /// <returns>A list of <see cref="Category" /></returns>
         List<Category> GetCategoriesWithEvents();
 
         /// <summary>
-        /// Asynchronously returns a list of categories including events
+        /// Asynchronously returns a list of categories 
+        /// including published events
         /// </summary>
         /// <returns>A list of <see cref="Category" /></returns>
         Task<List<Category>> GetCategoriesWithEventsAsync();
 
         /// <summary>
-        /// Asynchronously returns a list of categories including events
-        /// with cancellation support
+        /// Asynchronously returns a list of categories 
+        /// including published events with cancellation 
+        /// support
         /// </summary>
         /// <returns>A list of <see cref="Category" /></returns>
         Task<List<Category>> GetCategoriesWithEventsAsync(CancellationToken cancellationToken);

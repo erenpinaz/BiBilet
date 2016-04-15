@@ -1,11 +1,24 @@
-﻿using BiBilet.Domain.Entities.Application;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
+using BiBilet.Domain.Entities.Application;
+using PagedList;
 
 namespace BiBilet.Web.ViewModels
 {
+    public class SearchEventEditModel
+    {
+        [Display(Name = "Etkinlik ara")]
+        public string q { get; set; }
+    }
+
+    public class SearchEventViewModel
+    {
+        public List<Category> Categories { get; set; }
+        public IPagedList<Event> Events { get; set; }
+    }
+
     public class EventEditModel
     {
         public EventEditModel()

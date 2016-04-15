@@ -11,12 +11,15 @@ using BiBilet.Domain.Entities.Application;
 using BiBilet.Web.Utils;
 using BiBilet.Web.ViewModels;
 using Microsoft.AspNet.Identity;
+using PagedList;
 
 namespace BiBilet.Web.Controllers
 {
     [Authorize]
     public class EventController : BaseController
     {
+        private const int SearchPageSize = 10;
+
         private const string UploadPath = "/assets/uploads/events/";
         private const string PlaceholderImagePath = "/assets/images/event-placeholder.png";
 
@@ -29,6 +32,42 @@ namespace BiBilet.Web.Controllers
         public ActionResult MyEvents()
         {
             return View();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult> SearchEvent(string q, string c, int page = 1)
+        {
+            var categories = await UnitOfWork.CategoryRepository.GetCategoriesWithEventsAsync();
+
+            var events = c != null
+                ? categories
+                    .Where(cat => cat.Slug == c)
+                    .SelectMany(
+                        cat =>
+                            cat.Events.Where(
+                                e =>
+                                    e.StartDate > DateTime.UtcNow &&
+                                    e.Title.IndexOf(q ?? string.Empty, StringComparison.InvariantCultureIgnoreCase) >=
+                                    0)).ToList()
+                : categories
+                    .SelectMany(
+                        cat =>
+                            cat.Events.Where(
+                                e =>
+                                    e.StartDate > DateTime.UtcNow &&
+                                    e.Title.IndexOf(q ?? string.Empty, StringComparison.InvariantCultureIgnoreCase) >=
+                                    0)).ToList();
+
+            var pagedEvents = events
+                .OrderBy(e => e.StartDate)
+                .ToPagedList(page, SearchPageSize);
+
+            return View(new SearchEventViewModel
+            {
+                Categories = categories,
+                Events = pagedEvents
+            });
         }
 
         [HttpGet]

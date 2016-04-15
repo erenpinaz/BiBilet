@@ -1,5 +1,5 @@
-﻿using BiBilet.Domain.Entities.Application;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using BiBilet.Domain.Entities.Application;
 
 namespace BiBilet.Web.ViewModels
 {

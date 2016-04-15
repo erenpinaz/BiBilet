@@ -1,0 +1,102 @@
+﻿@using BiBilet.Web.ViewModels
+@using PagedList.Mvc
+@model BiBilet.Web.ViewModels.SearchEventViewModel
+
+@{
+    ViewBag.Title = "Etkinlik bul";
+
+    var queryParam = Request.QueryString["q"];
+    var categoryParam = Request.QueryString["c"];
+}
+
+<section id="searchEvent">
+    <h1 class="page-header">
+        @ViewBag.Title
+    </h1>
+
+    <div class="row">
+        <div class="col-md-12">
+            @Html.Partial("~/Views/Home/_SearchEvent.cshtml", new SearchEventEditModel())
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="panel-group" role="tablist">
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="categoryGroupHeading">
+                        <h4 class="panel-title">
+                            <a class="" role="button" data-toggle="collapse" href="#categoryListGroup" aria-expanded="true" aria-controls="categoryListGroup">
+                                Kategoriler
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="categoryListGroup" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="categoryGroupHeading" aria-expanded="true">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <a href="@Url.Action("SearchEvent", "Event", new {q = Request.QueryString["q"]})">
+                                    Tüm kategoriler
+                                </a>
+                            </li>
+                            @foreach (var category in Model.Categories)
+                            {
+                                <li class="list-group-item">
+                                    <a href="@Url.Action("SearchEvent", "Event", new {q = Request.QueryString["q"], c = category.Slug})">
+                                        @category.Name
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            @if (Model.Events.Count == 0)
+            {
+                <p>Bu arama sonucu herhangi bir etkinlik bulunamadı.</p>
+            }
+            else
+            {
+                <div class="filter-list">
+                    @if (!string.IsNullOrWhiteSpace(categoryParam))
+                    {
+                        <div class="filter label label-default">@categoryParam</div>
+                    }
+                    else
+                    {
+                        <div class="filter label label-default">Tüm kategoriler</div>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(queryParam))
+                    {
+                        <div class="filter label label-default">@queryParam</div>
+                    }
+                </div>
+                <hr/>
+                <div class="event-card-list">
+                    <div class="row">
+                        @foreach (var eventObj in Model.Events)
+                        {
+                            <div class="event-card-item col-md-12">
+                                <a href="@Url.Action("Details", "Event", new {slug = eventObj.Slug})">
+                                    <img src="/assets/images/event-placeholder.png" class="event-image" alt="Event Image">
+                                    <div class="event-info">
+                                        <h3>@eventObj.Title</h3>
+                                        <small>@eventObj.Venue.Name</small><br/>
+                                        <small class="text-muted">@eventObj.StartDate.ToString("f")</small>
+                                        <hr/>
+                                        <div class="label label-default">@eventObj.Category.Name</div>
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="event-card-list-pager text-center">
+                    @Html.PagedListPager(Model.Events, page => Url.Action("SearchEvent", "Event", new {page}), PagedListRenderOptions.ClassicPlusFirstAndLast)
+                </div>
+            }
+        </div>
+    </div>
+</section>

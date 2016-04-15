@@ -1,4 +1,5 @@
-﻿@model BiBilet.Web.ViewModels.HomeViewModel
+﻿@using BiBilet.Web.ViewModels
+@model BiBilet.Web.ViewModels.HomeViewModel
 
 @{
     ViewBag.Title = "Bi Bilet - BTSP 17. Dönem Yazılım Geliştirme Projesi";
@@ -7,9 +8,19 @@
 <div class="events">
     <div class="row">
         <div class="col-md-12">
+            <div class="search-event">
+                <h3 class="page-header">
+                    Etkinlik bul
+                </h3>
+                @Html.Partial("_SearchEvent", new SearchEventEditModel())
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
             <div class="hot-events">
                 <h3 class="page-header">
-                    <i class="glyphicon glyphicon-fire"></i>Çok yakında
+                    <i class="glyphicon glyphicon-fire margin-right"></i>Çok yakında
                 </h3>
                 <div class="row">
                     @foreach (var hotEvent in Model.HotEvents)
@@ -46,7 +57,7 @@
         <div class="col-md-6">
             <div class="upcoming-events">
                 <h3 class="page-header">
-                    <i class="glyphicon glyphicon-time"></i>Yaklaşan etkinlikler
+                    <i class="glyphicon glyphicon-time margin-right"></i>Yaklaşan etkinlikler
                 </h3>
                 <table class="table table-hover">
                     <tbody>
@@ -74,7 +85,7 @@
         <div class="col-md-6">
             <div class="past-events">
                 <h3 class="page-header">
-                    <i class="glyphicon glyphicon-calendar"></i>Geçmiş etkinlikler
+                    <i class="glyphicon glyphicon-calendar margin-right"></i>Geçmiş etkinlikler
                 </h3>
                 <table class="table table-hover">
                     <tbody>
@@ -104,13 +115,13 @@
         <div class="col-md-12">
             <div class="categories">
                 <h3 class="page-header">
-                    <i class="glyphicon glyphicon-folder-close"></i>Popüler Kategoriler
+                    <i class="glyphicon glyphicon-folder-close margin-right"></i>Popüler Kategoriler
                 </h3>
                 <div class="row">
                     @foreach (var category in Model.Categories)
                     {
                         <div class="col-sm-6 col-md-3">
-                            <a href="@category.Slug" class="thumbnail">
+                            <a href="@Url.Action("SearchEvent", "Event", new {category = category.Slug})" class="thumbnail">
                                 <div class="name-wrapper">
                                     <h4>@category.Name</h4>
                                 </div>
