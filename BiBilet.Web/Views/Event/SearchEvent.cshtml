@@ -80,7 +80,7 @@
                         {
                             <div class="event-card-item col-md-12">
                                 <a href="@Url.Action("Details", "Event", new {slug = eventObj.Slug})">
-                                    <img src="/assets/images/event-placeholder.png" class="event-image" alt="Event Image">
+                                    <img src="@eventObj.Image" class="event-image" alt="Event Image">
                                     <div class="event-info">
                                         <h3>@eventObj.Title</h3>
                                         <small>@eventObj.Venue.Name</small><br/>

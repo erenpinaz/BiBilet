@@ -42,7 +42,7 @@ namespace BiBilet.Web.Utils
                     var encoder = Encoder.Quality;
                     var encoderParameters = new EncoderParameters(1)
                     {
-                        Param = {[0] = new EncoderParameter(encoder, 75L)}
+                        Param = {[0] = new EncoderParameter(encoder, 90L)}
                     };
 
                     newBitMap.Save(outputFilename, imgCodecInfo, encoderParameters);

@@ -115,6 +115,9 @@ $(function () {
                     w: (x2 - x1),
                     h: (y2 - y1)
                 },
+                beforeSubmit: function() {
+                    $("button[type='submit']").prop("disabled", true);
+                },
                 uploadProgress: function (event, position, total, percentComplete) {
                     $(".progress-bar")
                             .css("width", percentComplete + "%")
@@ -132,6 +135,8 @@ $(function () {
                     $(".progress-bar")
                             .css("width", 0)
                             .attr("aria-valuenow", 0);
+
+                    $("button[type='submit']").prop("disabled", false);
 
                     imageUploaderModal.modal("hide");
                 }
